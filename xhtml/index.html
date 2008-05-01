@@ -1,0 +1,2590 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--Converted with jLaTeX2HTML 2002-2-1 (1.70) JA patch-2.0
+patched version by:  Kenshi Muto, Debian Project.
+* modified by:  Shige TAKENO
+LaTeX2HTML 2002-2-1 (1.70),
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:dc="http://purl.org/dc/terms/"
+      xmlns:cc="http://creativecommons.org/ns#">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Mac OS X (vers 31 October 2006 - Apple Inc. build 13), see www.w3.org" />
+
+  <title>ccREL: The Creative Commons Rights Expression
+  Language</title>
+  <meta name="description" content=
+  "ccREL: the Creative commons Rights expression Language" />
+  <meta name="keywords" content="main" />
+  <meta name="resource-type" content="document" />
+  <meta name="distribution" content="global" />
+  <meta name="Generator" content=
+  "jLaTeX2HTML v2002-2-1 JA patch-2.0" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <link rel="STYLESHEET" href="main.css" type="text/css" />
+</head>
+
+<body>
+  <h1 align="center" property="dc:title">ccREL: The Creative Commons Rights Expression
+  Language</h1>
+
+  <div>
+    <p align="center"><strong>Hal Abelson, Ben Adida, Mike
+    Linksvayer, Nathan Yergler</strong></p>
+
+    <p align="center">
+    <i><tt>[hal,ben,ml,nathan]@creativecommons.org</tt></i></p>
+
+    <p align="center"><strong>Version 1.0 - April 8th,
+    2008</strong></p>
+  </div>
+
+  <h1><a name="SECTION00010000000000000000" id=
+  "SECTION00010000000000000000">1 Introduction</a></h1>
+
+  <p>This paper introduces the Creative Commons Rights Expression
+  Language (ccREL), the standard recommended by Creative Commons
+  (CC) for machine-readable expression of copyright licensing terms
+  and related information.<a name="tex2html3" href="#foot548" id=
+  "tex2html3"><sup>1</sup></a> ccREL and its description in this
+  paper supersede all previous Creative Commons recommendations for
+  expressing licensing metadata. Like CC's previous recommendation,
+  ccREL is based on the World-Wide Web Consortium's Resource
+  Description Framework (RDF).<a name="tex2html6" href="#foot549"
+  id="tex2html6"><sup>2</sup></a>Compared to the previous
+  recommendation, ccREL is intended to be both easier for content
+  creators and publishers to provide, and more convenient for user
+  communities and tool builders to consume, extend, and
+  redistribute.<a name="tex2html8" href="#foot48" id=
+  "tex2html8"><sup>3</sup></a></p>
+
+  <p>Formally, ccREL is specified in an abstract syntax-free way,
+  as an extensible set of properties to be associated with a
+  licensed documents. Publishers have wide discretion in their
+  choice of syntax, so long as the process for extracting the
+  properties is discoverable and tool builders can retrieve the
+  properties of ccREL-compliant Web pages or embedded documents. We
+  also recommend specific concrete "default" syntaxes and
+  embedding schemes for content creators and publishers who want to
+  use CC licenses without needing to be concerned about extraction
+  mechanisms. The default schemes are RDFa for HTML Web pages and
+  resources referenced therein, and XMP for stand-alone
+  media.<a name="tex2html9" href="#foot550" id=
+  "tex2html9"><sup>4</sup></a></p>
+
+  <h4><a name="SECTION00010010000000000000" id=
+  "SECTION00010010000000000000">An Example.</a></h4>Using this new
+  recommendation, an author can express Creative Commons structured
+  data in an HTML page using the following simple markup:
+
+  <p class="codeblock">
+&lt;div about="http://lessig.org/blog/" xmlns:cc="http://creativecommons.org/ns#"&gt;
+    This page, by 
+    &lt;a property="cc:attributionName" rel="cc:attributionURL"
+          href="http://lessig.org/"&gt;
+       Lawrence Lessig
+    &lt;/a&gt;,
+    is licensed under a
+    &lt;a rel="license" href="http://creativecommons.org/licenses/by/3.0/"&gt;
+      Creative Commons Attribution License
+    &lt;/a&gt;.
+&lt;/div&gt;
+  </p>
+
+  <p>From this markup, tools can easily and
+  reliably determine that <tt><a name="tex2html14" href=
+  "http://lessig.org/blog/" id=
+  "tex2html14">http://lessig.org/blog/</a></tt> is licensed under a
+  CC Attribution License, v3.0, where attribution should be given
+  to "Lawrence Lessig" at the URL <tt><a name="tex2html15" href=
+  "http://lessig.org/" id=
+  "tex2html15">http://lessig.org/</a></tt>.</p>
+
+  <h4><a name="SECTION00010020000000000000" id=
+  "SECTION00010020000000000000">Structure of this
+  Paper.</a></h4>
+	<p>
+		This paper explains the design
+  rationale for these recommendations and illustrates some specific
+  applications we expect ccREL to support. We begin with a review
+  of the original 2002 recommendation for Creative Commons metadata
+  and we explain why, as Creative Commons has grown, we have come
+  to regard this as inadequate. We then introduce ccREL in the
+  syntax-free model: as a vocabulary of properties. Next, we
+  describe the recommended concrete syntaxes. In addition, we
+  explain how other frameworks, such as microformats, can be made
+  ccREL compliant. Finally, we discuss specific use cases and the
+  types of tools we hope to see built to take advantage of
+  ccREL.</p>
+
+  <h1><a name="SECTION00020000000000000000" id=
+  "SECTION00020000000000000000">2 Background on Creative Commons
+  recommendations</a></h1>
+
+  <p>Creative Commons was publicly launched in
+  December 2002, but its genesis traces to summer 2000 and
+  discussions about how to promote a reasonable and flexible
+  copyright regime for the Internet in an environment where
+  copyright had become unreasonable and inflexible. There was no
+  standard legal means for creators to grant limited rights to the
+  public for online material, and obtaining rights often required
+  difficult searches to identify rights-holders and burdensome
+  transaction costs to negotiate permissions. As digital networks
+  dramatically lowered other costs and engendered new opportunities
+  for producing, consuming, and reusing content, the inflexibility
+  and costs of licensing became comparatively more
+  onerous.</p>
+
+  <p>Over the following year, Creative Commons'
+  founders came to adopt a two-pronged response to this challenge.
+  One prong was legal and social: create widely applicable licenses
+  that permit sharing and reuse with conditions, clearly
+  communicated in human-readable form. The other prong called for
+  leveraging digital networks themselves to make licensed works
+  more reusable and easy to find; that is, to lower search and
+  transaction costs for works whose copyright holders have granted
+  some rights to the public in advance. Core to this technical
+  component is the ability for machines to detect and interpret the
+  licensing terms as automatically as possible. Simple programs
+  should thus be able to answer questions like:</p>
+
+  <ul>
+    <li>Under what license has a copyright holder released her
+    work, and what are the associated permissions and
+    restrictions?</li>
+
+    <li>Can I redistribute this work for commercial purposes?</li>
+
+    <li>Can I distribute a modified version of this work?</li>
+
+    <li>How should I assign credit to the original author?</li>
+  </ul>
+
+  <p>Equally important is constructing a robust
+  user-machine bridge for publishing and detecting structured
+  licensing information on the Web, and stimulating the emergence
+  of tools that lower the barriers to collaboration and remixing.
+  For example, if a Web page contains multiple images, not all
+  licensed identically, can users easily determine which rights are
+  granted on a particular image? Can they easily extract this
+  image, create derivative works, and distribute them while
+  assigning proper credit to the original author? In other words,
+  is there a clear and usable connection between what the user sees
+  and what the machine parses? ccREL aims to be a standard that
+  implementors can follow in creating tools that make these
+  operations simple.</p>
+
+  <h2><a name="SECTION00021000000000000000" id=
+  "SECTION00021000000000000000">2.1 Creative Commons and
+  RDF</a></h2>
+
+  <p>As early as fall 2001, Creative Commons had
+  settled on the approach of creating machine-readable licenses
+  based on the World Wide Web Consortium's then-emerging Resource
+  Description Framework (RDF), part of the W3C Semantic Web
+  Activity.<a name="tex2html16" href="#foot551" id=
+  "tex2html16"><sup>5</sup></a></p>
+
+  <p>The motivation for choosing RDF in 2001, and
+  for continuing to use it now, is strongly connected to the
+  Creative Commons vision: promoting scholarly and cultural
+  progress by making it easy for people to share their creations
+  and to collaborate by building on each other's work. In order to
+  lower barriers to collaboration, it is important that the machine
+  expression of licensing information and other metadata be
+  <i>interoperable</i>. Interoperability here means not only that
+  different programs can read particular metadata properties, but
+  also that vocabularies--sets of related properties--can evolve
+  and be extended. This should be possible in such a way that
+  innovation can proceed in a distributed fashion in different
+  communities--authors, musicians, photographers, cinematographers,
+  biologists, geologists, an so on--so that licensing terms can be
+  devised by local communities for types of works not yet
+  envisioned. It is also important that potential extensions be
+  backward compatible: existing tools should not be disrupted when
+  new properties are added. If possible, existing tools should even
+  be able to handle basic aspects of new properties. This is
+  precisely the kind of "interoperability of meaning" that RDF is
+  designed to support.</p>
+
+  <h3><a name="SECTION00021100000000000000" id=
+  "SECTION00021100000000000000">2.1.1 RDF triples</a></h3>
+
+  <p>RDF is a framework for describing entities on
+  the Web. It provides exceptionally strong support for
+  interoperability and extensibility. All entities in RDF are named
+  using a simple, distributed, globally addressable scheme already
+  well known to Web users: the URL, and its generalization the
+  URI.<a name="tex2html18" href="#foot66" id=
+  "tex2html18"><sup>6</sup></a></p>
+
+  <p>For example, Lawrence Lessig's blog, a
+  document identified by its URL <tt><a name="tex2html19" href=
+  "http://lessig.org/blog/" id=
+  "tex2html19">http://lessig.org/blog/</a></tt>, is licensed under
+  the Creative Commons Attribution license. That license is also a
+  document, identified by its own URL <tt><a name="tex2html20"
+  href="http://creativecommons.org/licenses/by/3.0/" id=
+  "tex2html20">http://creativecommons.org/licenses/by/3.0/</a></tt>.
+  The property of "being licensed under", which we'll call
+  "license" can <i>itself</i> be considered a Web object and
+  identified by a URL. This URL is <tt><a name="tex2html21" href=
+  "http://www.w3.org/1999/xhtml/vocab#license" id=
+  "tex2html21">http://www.w3.org/1999/xhtml/vocab#license</a></tt>,
+  which refers to a Web page that contains information describing
+  the "license" property. This particular Web page, maintained by
+  the Web Consortium, is the reference document that describes the
+  vocabulary supported as part of the Web standard XHTML
+  language.<a name="tex2html22" href="#foot552" id=
+  "tex2html22"><sup>7</sup></a></p>
+
+  <p>Instantiating properties as URLs enables
+  anyone to use those properties to formulate descriptions, or to
+  discover detailed information about an existing property by
+  consulting the page at the URL, or to make new properties
+  available simply by publishing the URLs that describe those
+  properties.</p>
+
+  <p>As a case in point, Creative Commons
+  originally defined its own "license" property, which it
+  published at <tt><a name="tex2html24" href=
+  "http://creativecommons.org/ns#license" id=
+  "tex2html24">http://creativecommons.org/ns#license</a></tt>,<a name="tex2html25"
+  href="#foot553" id="tex2html25"><sup>8</sup></a>since no other
+  group had defined in RDF the concept of a copyright license. When
+  the XHTML Working Group introduced its own license property in
+  2005, we opted to start using their version, rather than maintain
+  our own CC-dependent notion of license. We were then able to
+  declare that <tt><a name="tex2html32" href=
+  "http://creativecommons.org/ns#license" id=
+  "tex2html32">http://creativecommons.org/ns#license</a></tt> is
+  equivalent to the new property <tt><a name="tex2html33" href=
+  "http://www.w3.org/1999/xhtml/vocab#license" id=
+  "tex2html33">http://www.w3.org/1999/xhtml/vocab#license</a></tt>,
+  simply by updating the description at <tt><a name="tex2html34"
+  href="http://creativecommons.org/ns#license" id=
+  "tex2html34">http://creativecommons.org/ns#license</a></tt>.
+  Importantly, RDF makes this equivalence interpretable by
+  programs, not just humans, so that "old" RDF license
+  declarations can be automatically interpreted using the new
+  vocabulary.</p>
+
+  <p>In general, atomic RDF descriptions are called
+  <em>triples</em>. Each triple consists of a <i>subject</i>, a
+  <i>property</i>, and a <i>value</i> for that property of the
+  subject. The triple that describes the license for Lessig's blog
+  could be represented graphically as shown in figure <a href=
+  "#fig:rdftriple">1</a>: a point (the subject) labeled with the
+  blog URL, a second point (the value) labeled with the license
+  URL, and an arrow (the property) labeled with the URL that
+  describes the meaning of the term "license", running from the
+  blog to the license. In general, an RDF model, as a collection of
+  triples, can be visualized as a graph of relations among
+  elements, where the edges and vertices are all labeled using
+  URIs.</p>
+
+  <div align="center">
+    <a name="fig:rdftriple" id="fig:rdftriple"></a><a name=
+    "89"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 1:</strong> An RDF Triple represented as an
+        edge between two nodes of a graph.
+      </caption>
+
+      <tr>
+        <td><img width="650" height="345" align="bottom" border="0"
+        src="./license-rdf-diagram.png" alt=
+        "Image license-rdf-diagram" /></td>
+      </tr>
+    </table>
+  </div>
+
+  <h3><a name="SECTION00021200000000000000" id=
+  "SECTION00021200000000000000">2.1.2 Expressing RDF as
+  text</a></h3>
+
+  <p>Abstract RDF graphs can be expressed textually
+  in various ways. One commonly used notation, RDF/XML, uses XML
+  syntax. In RDF/XML the triple describing the licensing of
+  Lessig's blog is denoted:</p>
+
+  <p class="codeblock">
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns:xhtml="http://www.w3.org/1999/xhtml/vocab#"&gt;
+  &lt;rdf:Description rdf:about="http://www.lessig.org/blog/"&gt;
+     &lt;xhtml:license rdf:resource="http://creativecommons.org/licenses/by/3.0/" /&gt;
+  &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;
+  </p>
+
+  <p>One desirable feature of
+  RDF/XML notation is that it is completely self-contained: all
+  identifiers are fully qualified URLs. On the other hand, RDF/XML
+  notation is extremely verbose, making it cumbersome for people to
+  read and write, especially if no shorthand conventions are used.
+  Even this simple example (verbose as it is) uses a shorthand
+  mechanism: the second line of the description beginning
+  <tt>xmlns:xhtml</tt> defines "<tt>xhtml:</tt>" to be an
+  abbreviation for <tt><a name="tex2html36" href=
+  "http://www.w3.org/1999/xhtml/vocab#" id=
+  "tex2html36">http://www.w3.org/1999/xhtml/vocab#</a></tt>, thus
+  expressing the <tt>license</tt> property in its shorter form,
+  <tt>xhtml:license</tt>, on the fourth line.</p>
+
+  <p>Since the introduction of RDF,
+  the Web Consortium has developed more compact alternative
+  syntaxes for RDF graphs. For example the N3 syntax would denote
+  the above triple more concisely:<a name="tex2html37" href=
+  "#foot554" id="tex2html37"><sup>9</sup></a></p>
+
+  <p class="codeblock">
+&lt;http://lessig.org/blog/&gt;
+  &lt;http://www.w3.org/1999/xhtml#license&gt;
+  &lt;http://creativecommons.org/licenses/by/3.0/&gt; .
+  </p>
+
+  <p>We could also
+  rewrite this using a shorthand as in the RDF/XHTML example above,
+  defining: <tt>xhtml:</tt> as an abbreviation for <tt><a name=
+  "tex2html39" href="http://www.w3.org/1999/xhtml/vocab#" id=
+  "tex2html39">http://www.w3.org/1999/xhtml/vocab#</a></tt>:</p>
+
+  <p class="codeblock">
+@prefix xhtml: &lt;http://www.w3.org/1999/xhtml/vocab#&gt;
+&lt;http://lessig.org/blog/&gt; xhtml:license &lt;http://creativecommons.org/licenses/by/3.0/&gt; .
+  </p>
+
+  <p>The shorthand does not provide improved compactness or
+  readability if a prefix is only used once as above, of course. In
+  N3, prefixes are typically defined only when they are used more
+  than once, for example to express multiple properties taken from
+  the same vocabulary. In RDF/XML, because of the stricter parsing
+  rules of XML, there is a bit less flexibility: predicates can
+  only be expressed using the shorthand, while subjects can only be
+  expressed using the full URI.</p>
+
+  <h2><a name="SECTION00022000000000000000" id=
+  "SECTION00022000000000000000">2.2 CC's Previous Recommendation:
+  RDF/XML in HTML Comments</a></h2>
+
+  <p>With its first unveiling of machine-readable licenses in
+  2002, Creative Commons recommended that publishers use the
+  RDF/XML syntax to express license properties. The CC web site
+  included a Web-based license generator, where publishers could
+  answer a questionnaire to indicate what kind of license they
+  wished, and the generator then provided RDF/XML text for them to
+  include on their Web pages, inside HTML comments: 
+  </p>
+
+  <p class="codeblock">
+&lt;!-- [RDF/XML HERE] --&gt;
+  </p>
+
+  <p>We knew at the time that this was a cumbersome design, but
+  there was little alternative. RDF/XML, despite its verbosity, was
+  the only standard syntax for expressing RDF. Worse, the Web
+  Consortium's Semantic Web Activity was focused on providing
+  organizations with ways to annotate databases for integration
+  into the Web, and it paid scant attention to the issues of
+  intermixing semantic information with visible Web elements. A
+  task force had been formed to address these issues, but there was
+  no W3C standard for including RDF in HTML
+  pages.</p>
+
+  <p>One consequence of CC's limited initial design is that,
+  although millions of Web pages now include Creative Commons
+  licenses and metadata, there is no uniform, extensible way for
+  tool developers to access this metadata, and the tools that do
+  exist rely on ad-hoc techniques for extracting
+  metadata.</p>
+
+  <p>Since 2004, Creative Commons has been working with the Web
+  Consortium to create more straightforward and less limited
+  methods of embedding RDF in HTML documents. These new methods are
+  now making their way through the W3C standards process.
+  Accordingly,</p>
+
+  <blockquote>
+    <i>Creative Commons no longer recommends using RDF/XML in
+    HTML comments for specifying licensing information. This paper
+    supersedes that recommendation.</i>
+  </blockquote>
+
+  <p>We hope that the new ccREL standard presented in this paper
+  will result in a more consistent and stable platform for
+  publishers and tool builders to build upon Creative Commons
+  licenses.</p>
+
+  <h1><a name="SECTION00030000000000000000" id=
+  "SECTION00030000000000000000">3 The ccREL Abstract Model</a></h1>
+
+  <p>This section describes ccREL, Creative Commons' new
+  recommendation for machine-readable licensing information, in its
+  abstract form, i.e., independent of any concrete syntax. As an
+  abstract specification, ccREL consists of a small but extensible
+  set of RDF properties that should be provided with each licensed
+  object. This abstract specification has evolved since the
+  original introduction of CC properties in 2002, but it is worth
+  noting that all first-generation licenses are still correctly
+  interpretable against the new specification, thanks in large part
+  to the extensibility properties of RDF
+  itself.</p>
+
+  <p>The abstract model for ccREL distinguishes two classes of
+  properties:</p>
+
+  <ol>
+    <li><i>Work properties</i> describe aspects of specific
+    works,<br />
+    including under which license a Work is distributed.</li>
+
+    <li><i>License properties</i> describe aspects of
+    licenses.</li>
+  </ol>
+
+  <p>Publishers will normally be concerned only with Work
+  properties: this is the only information publishers provide to
+  describe a Work's licensing terms. License properties are used by
+  Creative Commons itself to define the authoritative
+  specifications of the licenses we offer. Other organizations are
+  free to use these components for describing their own licenses.
+  Such licenses, although related to Creative Commons licenses,
+  would not themselves be Creative Commons licenses nor would they
+  be endorsed necessarily by Creative
+  Commons.</p>
+
+  <h2><a name="SECTION00031000000000000000" id=
+  "SECTION00031000000000000000">3.1 Work Properties</a></h2>
+
+  <p>A publisher who wishes to license a Work under a Creative
+  Commons license must, at a minimum, provide one RDF triple that
+  specifies the value of the Work's <tt>license</tt> property
+  (i.e., the license that governs the Work), for
+  example</p>
+
+  <p class="codeblock">
+&lt;http://lessig.org/blog/&gt; xhtml:license &lt;http://creativecommons.org/licenses/by/3.0/&gt; .
+  </p>
+
+  <p>Although this is the minimum amount of
+  information, Creative Commons also encourages publishers to
+  include additional triples giving information about licensed
+  works: the title, the name and URL for assigning attribution, and
+  the document type. An example might
+  be</p>
+
+  <p class="codeblock">
+&lt;http://lessig.org/blog/&gt; dc:title "The Lessig Blog" .
+&lt;http://lessig.org/blog/&gt; cc:attributionName "Larry Lessig" .
+&lt;http://lessig.org/blog/&gt; cc:attributionURL &lt;http://lessig.org/&gt; .
+&lt;http://lessig.org/blog/&gt; dc:type dcmitype:Text .
+  </p>
+
+  <p>The specific work properties
+  illustrated here
+  are</p>
+
+  <ul>
+    <li><tt>dc:title</tt> - the document's title. Here <tt>dc:</tt>
+    is shorthand for the Dublin Core vocabulary defined at
+    <tt><a name="tex2html40" href=
+    "http://purl.org/dc/elements/1.1/" id=
+    "tex2html40">http://purl.org/dc/elements/1.1/</a></tt> and
+    maintained by the Dublin Core Metadata Initiative.<a name=
+    "tex2html41" href="#foot555" id=
+    "tex2html41"><sup>10</sup></a></li>
+
+    <li><tt>cc:attributionName</tt> - the name to cite when giving
+    attribution when the work is modified or redistributed under
+    the terms of the associated Creative Commons license.<a name=
+    "tex2html43" href="#foot556" id="tex2html43"><sup>11</sup></a>
+    The prefix <tt>cc:</tt>, as mentioned above, is an abbreviation
+    for <tt><a name="tex2html44" href=
+    "http://creativecommons.org/ns#" id=
+    "tex2html44">http://creativecommons.org/ns#</a></tt>.</li>
+
+    <li><tt>cc:attributionURL</tt> - the URL to link to when
+    providing attribution.</li>
+
+    <li><tt>dc:type</tt> - the type of the licensed document. In
+    this example, the associated value is <tt>dcmitype:Text</tt>,
+    which indicates text. Lessig's blog sometimes includes video,
+    in which case the type would be <tt>dcmitype:MovingImage</tt>.
+    Recommended use of <tt>dc:type</tt> is explained at
+    <tt><a name="tex2html45" href=
+    "http://dublincore.org/documents/dces/" id=
+    "tex2html45">http://dublincore.org/documents/dces/</a></tt>.
+    Individual types like <tt>dcmitype:Text</tt> and
+    <tt>dcmitype:MovingImage</tt> are part of the DCMI
+    Vocabulary.</li>
+  </ul>
+
+  <p>Incidentally, the above list
+  of four triples could be alternately expressed using the N3
+  semicolon convention, which indicates a list of triples that all
+  have the same
+  subject:</p>
+
+  <p class="codeblock">
+@prefix dc: &lt;http://purl.org/dc/elements/1.1/&gt;
+@prefix cc: &lt;http://creativecommons.org/ns#&gt;
+@prefix dcmitype: &lt;http://purl.org/dc/dcmitype/&gt;
+
+&lt;http://lessig.org/blog/&gt;
+    dc:title "The Lessig Blog" ;
+    cc:attributionName "Larry Lessig" ;
+    cc:attributionURL &lt;http://lessig.org/&gt; ;
+    dc:type dcmitype:Text .
+  </p>
+
+  <p>There are two more Work
+  properties available to publishers of CC
+  material:</p>
+
+  <ul>
+    <li>
+      <tt>dc:source</tt>--indicates the original source of modified
+      work, specified as a URI, for example
+
+      <p class="codeblock">
+&lt;http://randomblog.org/modified_lessig_presentation&gt; dc:source &lt;http://lessig.org/&gt; .
+      </p>
+    </li>
+
+    <li>
+      <tt>cc:morePermissions</tt>--indicates a URL that gives
+      information on additional permissions beyond those specified
+      in the CC license. For example, a document with a CC license
+      that requires attribution, might, under certain
+      circumstances, be usable without attribution. Or a document
+      restricted for noncommercial use could be available for
+      commercial use under certain conditions.
+
+      <p>A typical use would then be:</p>
+
+      <p class="codeblock">
+&lt;http://randomblog.org/insightful_posting&gt;
+   cc:morePermissions &lt;http://randomblog.org/attribution_free_licensing&gt; .
+      </p>
+
+      <p>The information at the designated URL is
+      completely up to the publisher, as are the terms of the
+      associated additional permissions, with one proviso: The
+      additional permissions must be <em>additional</em>
+      permissions, i.e., they cannot restrict the rights granted by
+      the Creative Commons license. Said another way, any use of
+      the work that is valid without taking the morePermissions
+      property into account, must remain valid after taking
+      morePermissions into account.</p>
+    </li>
+  </ul>
+
+  <p>This is the
+  current set of ccREL Work properties. New properties may be added
+  over time, defined by Creative Commons or by others. Observe that
+  ccREL inherits the underlying extensibility of RDF--all that is
+  required to create new properties is to include additional
+  triples that use these. For example, a community of photography
+  publishers could agree to use an additional
+  <tt>photoResolution</tt> property, and this would not disrupt the
+  operation of pre-existing tools, so long as the old properties
+  remain available. We'll see below that the concrete syntax (RDFa)
+  recommended by Creative Commons for ccREL enjoys this same
+  extensibility
+  property.</p>
+
+  <p>Distributed
+  creation of new properties notwithstanding, only Creative Commons
+  can include new elements in the <tt>cc:</tt> namespace, because
+  Creative Commons controls the defining document at <tt><a name=
+  "tex2html46" href="http://creativecommons.org/ns#" id=
+  "tex2html46">http://creativecommons.org/ns#</a></tt>. This
+  ability to retain this kind of control, without loss of
+  extensibility, is a direct consequence of using
+  RDF.</p>
+
+  <h2><a name="SECTION00032000000000000000" id=
+  "SECTION00032000000000000000">3.2 License
+  Properties</a></h2>
+
+  <p>We now
+  consider properties used for describing Licenses. With ccREL,
+  Creative Commons does not expect publishers to use these license
+  properties directly, or even to deal with them at
+  all.</p>
+
+  <p>In contrast,
+  Creative Commons' original metadata recommendation encouraged
+  publishers to provide the license properties with every licensed
+  work. This design was awkward, because once a publisher has
+  already indicated which license governs the Work, specifying the
+  license properties in addition is redundant and thus error prone.
+  The ccREL recommendation does away with this duplication and
+  leaves it to Creative Commons to provide the license
+  properties.</p>
+
+  <p>Tool
+  builders, on the other hand, should take these License properties
+  into account so that they can interpret the particulars of each
+  Creative Commons license. The License properties governing a Work
+  will typically be found by URL-based discovery. A tool examining
+  a Work notices the <tt>xhtml:license</tt> property and follows
+  the indicated link to a page for the designated license. Those
+  license description pages--the "Creative Commons Deeds"-- are
+  maintained by Creative Commons, and include the license
+  properties in the CC recommended concrete syntax (RDFa), as
+  described in section <a href=
+  "#deed-RDFa">7.2</a>:</p>
+
+  <p>Here are the
+  License properties defined as part of
+  ccREL:</p>
+
+  <ul>
+    <li><tt>cc:permits</tt> - permits a particular
+    use of the Work above and beyond what default copyright law
+    allows.</li>
+
+    <li><tt>cc:prohibits</tt> - prohibits a
+    particular use of the Work, specifically affecting the scope of
+    the permissions provided by <tt>cc:permits</tt> (but not
+    reducing rights granted under copyright).</li>
+
+    <li><tt>cc:requires</tt> - requires certain
+    actions of the user when enjoying the permissions given by
+    <tt>cc:permits</tt>.</li>
+
+    <li><tt>cc:jurisdiction</tt> - associates the
+    license with a particular legal jurisdiction.</li>
+
+    <li><tt>cc:deprecatedOn</tt> - indicates that
+    the license has been deprecated on the given date.</li>
+
+    <li><tt>cc:legalCode</tt> - references the
+    corresponding legal text of the license.</li>
+  </ul>
+
+  <p>Importantly,
+  Creative Commons does not allow third parties to modify these
+  properties for existing Creative Commons licenses. That said,
+  publishers may certainly use these properties to create new
+  licenses of their own, which they should host on their own
+  servers, and not represent as being Creative Commons
+  licenses.</p>
+
+  <p>The possible
+  values for <tt>cc:permits</tt>, i.e., the possible permissions
+  granted by a CC License
+  are:</p>
+
+  <ul>
+    <li><tt>cc:Reproduction</tt> - copying the work
+    in various forms.</li>
+
+    <li><tt>cc:Distribution</tt> - redistributing
+    the work.</li>
+
+    <li><tt>cc:DerivativeWorks</tt> - preparing
+    derivatives of the work.</li>
+  </ul>
+
+  <p>The possible
+  values for <tt>cc:prohibits</tt>, i.e., possible prohibitions
+  that modulate permissions (but do not affect permissions granted
+  by copyright law, such as fair use)
+  are:</p>
+
+  <ul>
+    <li><tt>cc:CommercialUse</tt> - using the Work
+    for commercial purposes.</li>
+  </ul>
+
+  <p>The possible
+  values for <tt>cc:requires</tt>
+  are:</p>
+
+  <ul>
+    <li><tt>cc:Notice</tt> - providing an
+    indication of the license that governs the work.</li>
+
+    <li><tt>cc:Attribution</tt> - giving credit to
+    the appropriate creator.</li>
+
+    <li><tt>cc:ShareAlike</tt> - when
+    redistributing derivative works of this work, using the same
+    license.</li>
+
+    <li><tt>cc:SourceCode</tt> - when
+    redistributing this work (which is expected to be software when
+    this requirement is used), source code must be
+    provided.</li>
+  </ul>
+
+  <p>For example,
+  the Attribution Share-Alike v3.0 Creative Commons license is
+  described as:<a name="tex2html47" href="#foot557" id=
+  "tex2html47"><sup>12</sup></a></p>
+
+  <p class="codeblock">
+@prefix cc: http://creativecommons.org/ns#
+&lt;http://creativecommons.org/licenses/by-sa/3.0/&gt;
+  cc:permits cc:Reproduction ;
+  cc:permits cc:Distribution ;
+  cc:permits cc:DerivativeWorks ;
+  cc:requires cc:Attribution ;
+  cc:requires cc:ShareAlike ;
+  cc:requires cc:Notice .
+  </p>
+
+  <p>As new copyright licenses are introduced, Creative Commons
+  expects to add new permissions, requirements, and prohibitions.
+  However, it is unlikely that Creative Commons will introduce new
+  license property types beyond <tt>permits</tt>,
+  <tt>requires</tt>, and <tt>prohibits</tt>. As a result, tools
+  built to understand these three property types will be able to
+  interpret future licenses, at least by listing the license's
+  permissions, requirements, and prohibitions: thanks to the
+  underlying RDF framework of designating properties by URLs, these
+  tools can easily discover human-readable descriptions of these
+  as-yet-undefined property
+  values.</p>
+
+  <h1><a name="SECTION00040000000000000000" id=
+  "SECTION00040000000000000000">4 Desiderata for concrete ccREL
+  syntaxes</a></h1>
+
+  <p>While the previous examples illustrate ccREL using the
+  RDF/XML and N3 notations, ccREL is meant to be independent of any
+  particular syntax for expressing RDF triples. To create compliant
+  ccREL implementations, publishers need only arrange that tool
+  builders can extract RDF triples for the relevant ccREL
+  properties--typically only the Work properties, since Creative
+  Commons provides the License properties--through a discoverable
+  process. We expect that different publishers will do this in
+  different ways, using syntaxes of their choice that take into
+  account the kinds of environments they would like to provide for
+  their users. In each case, however, it is the publisher's
+  responsibility to associate their pages with appropriate
+  extraction mechanisms and to arrange for these mechanisms to be
+  discoverable by tool
+  builders.</p>
+
+  <p>Creative Commons also recommends concrete ccREL syntaxes
+  that tool builders should recognize by default, so that
+  publishers who do not want to be explicitly concerned with
+  extraction mechanisms have a clear implementation path. These
+  recommended syntaxes--RDFa for HTML Web pages, and XMP for
+  free-floating content--are described in the following sections.
+  This section presents the principles underlying our
+  recommendations.</p>
+
+  <h2><a name="SECTION00041000000000000000" id=
+  "SECTION00041000000000000000">4.1 Principles for
+  HTML</a></h2>
+
+  <p>Licensing information for a Web document will be expressed
+  in some form of HTML. What properties would an ideal HTML syntax
+  for expressing Creative Commons terms exhibit? Given the use
+  cases we've observed over the past several years, we can call out
+  the following
+  desiderata:</p>
+
+  <ul>
+    <li><b>Independence and Extensibility</b>: We
+    cannot know in advance what new kinds of data we will want to
+    integrate with Creative Commons licensing data. Currently, we
+    already need to combine Creative Commons properties with simple
+    media files (sound, images, videos) and there's a growing
+    interest in providing markup for complex scientific data
+    (biomedical records, experimental results). Therefore, the
+    means of expressing the licensing information in HTML should be
+    extensible: it should enable the reuse of existing data models
+    and the addition of new properties, both by Creative Commons
+    and by others. Adding new properties should not require
+    extensive coordination across communities or approval from a
+    central authority. Tools should not suddenly become obsolete
+    when new properties are added, or when existing properties are
+    applied to new kinds of data sets.</li>
+
+    <li><b>DRY (Don't Repeat Yourself)</b>: An HTML
+    document often already displays the name of the author and a
+    clickable link to a Creative Commons license. Providing
+    machine-readable structure should not require duplicating this
+    data in a separate format. Notably, if the human-clickable link
+    to the license is changed, e.g. from v2.5 to v3.0, a machine
+    processing the page should automatically note this change
+    without the publisher having to update another part of the HTML
+    file to keep it "in sync" with the human-readable
+    portion.</li>
+
+    <li><b>Visual Locality</b>: An HTML page may
+    contain multiple items, for example a dozen photos, each with
+    its own structured data, for example a different license. It
+    should be easy for tools to associate the appropriate
+    structured data with their corresponding visual
+    display.</li>
+
+    <li><b>Remix Friendliness</b>: It should be
+    easy to copy an item from one document and paste it into a new
+    document with all appropriate structured data included. In a
+    world where we constantly remix old content to create new
+    content, copy-and-paste, widgets, and sidebars are crucial
+    elements of the remixable Web. As much as possible, ccREL
+    should allow for easy copy-and-paste of data to carry along the
+    appropriate licensing information.</li>
+  </ul>
+
+  <h2><a name="SECTION00042000000000000000" id=
+  "SECTION00042000000000000000">4.2 Desiderata for Free-Floating
+  Content</a></h2>
+
+  <p>Some important works are not typically conveyed via HTML.
+  Examples are MP3s, MPEGs, and other media files. The technique
+  for embedding licensing data into these files should achieve the
+  following design
+  principles:</p>
+
+  <ul>
+    <li><b>Consistency</b>: There are many
+    different possible file types. The mechanism for embedding
+    licensing information should be reasonably generic, so that a
+    single tool can read and write the licensing information
+    without requiring awareness of all file types.</li>
+
+    <li><b>Publisher Accountability</b>: It can be
+    difficult to provide for accountability of licensing metadata
+    when files are shared in peer-to-peer systems, rather than
+    distributed from a central location. The method for expressing
+    metadata should facilitate providing publisher accountability
+    at least as strong as the accountability of a Web page with a
+    well-defined host and owner.</li>
+
+    <li><b>Simplicity</b>: The process of embedding
+    licensing information should require little more than a simple
+    and free program. In particular, though complex publisher
+    accountability approaches involving digital signatures and
+    certificates can be used, they should not be required for the
+    basic use case.</li>
+  </ul>
+
+  <h1><a name="SECTION00050000000000000000" id=
+  "SECTION00050000000000000000">5 Including ccREL information in
+  Web Pages</a></h1>
+
+  <p>Consider the abstract model for ccREL. Here, again, are the
+  triples from the Lessig blog example, expressed in N3.<a name=
+  "tex2html48" href="#foot558" id=
+  "tex2html48"><sup>13</sup></a></p>
+
+  <p class="codeblock">
+@prefix xhtml: &lt;http://www.w3.org/1999/xhml#&gt; .
+@prefix cc: &lt;http://creativecommons.org/ns#&gt; .
+
+&lt;http://lessig.org/blog/&gt; xhtml:license &lt;http://creativecommons.org/licenses/by/3.0/&gt; .
+&lt;http://lessig.org/blog/&gt; cc:attributionName "Lawrence Lessig" .
+&lt;http://lessig.org/blog/&gt; cc:attributionURL &lt;http://lessig.org/&gt; .
+  </p>
+
+  <p>The Web page to which this information
+  refers typically already contains some HTML that describes this
+  same information (redundantly), in human-readable form, for
+  example:</p>
+
+  <p class="codeblock">
+&lt;div&gt;
+  This page, by
+  &lt;a href="http://lessig.org/"&gt;
+     Lawrence Lessig
+  &lt;/a&gt;,
+  is licensed under a
+  &lt;a href="http://creativecommons.org/licenses/by/3.0/"&gt;
+      Creative Commons Attribution License
+  &lt;/a&gt;.
+&lt;/div&gt;
+  </p>
+
+  <p>What we would like is a way to quickly
+  augment this HTML with just enough structure to enable the
+  extraction of the RDF triples, using the principles articulated
+  above, including, notably, Don't Repeat Yourself: the existing
+  markup and links should be used both for human and machine
+  readability.</p>
+
+  <h2><a name="SECTION00051000000000000000" id=
+  "SECTION00051000000000000000">5.1 RDFa and concrete syntax for
+  Work properties</a></h2>
+
+  <p>RDFa was designed by the W3C with Creative
+  Commons' input. The design was motivated in part by the
+  principles noted above. Using existing HTML properties and a
+  handful of new ones, RDFa enables a chunk of HTML to express RDF
+  triples, reusing the content wherever possible. For example, the
+  HTML above would be extended by including additional attributes
+  within the HTML anchor tags as
+  follows:</p>
+
+  <p class="codeblock">
+&lt;div about="" xmlns:cc="http://creativecommons.org/ns#"&gt;
+  This page, by
+  &lt;a property="cc:attributionName"
+     rel="cc:attributionURL" href="http://lessig.org/"&gt;
+        Lawrence Lessig
+  &lt;/a&gt;,
+  is licensed under a
+  &lt;a rel="license" href="http://creativecommons.org/licenses/by/3.0/"&gt;
+    Creative Commons Attribution License
+  &lt;/a&gt;.
+&lt;/div&gt;
+  </p>
+
+  <p>The rules for understanding
+  the meaning of the above markup are as
+  follows:</p>
+
+  <ul>
+    <li><tt>about</tt> defines the subject of all
+    triples within the <tt>&lt;div&gt;</tt>. Here we have
+    <tt>about=""</tt>, which defines the subject to be the URL of
+    the current document.</li>
+
+    <li><tt>xmlns:cc</tt> associates, throughout
+    the <tt>&lt;div&gt;</tt>, the prefix <tt>cc</tt> with the URL
+    <tt><a name="tex2html49" href="http://creativecommons.org/ns#"
+    id="tex2html49">http://creativecommons.org/ns#</a></tt>, much
+    as N3 does with <tt>@prefix</tt>.</li>
+
+    <li><tt>property</tt> generates a new triple
+    with predicate <tt>cc:attributionName</tt>, and the text
+    content of the element, in this case "Lawrence Lessig," as
+    the object.</li>
+
+    <li><tt>rel="cc:attributionURL"</tt> generates
+    a new triple with predicate <tt>cc:attributionURL</tt>, and the
+    URL in the <tt>href</tt> as the object.</li>
+
+    <li><tt>rel="license"</tt> generates a new
+    triple with predicate <tt>xhtml:license</tt>, as <tt>xhtml</tt>
+    is the default prefix for reserved XHTML values like
+    <tt>license</tt>. The object is given by the
+    <tt>href</tt>.</li>
+  </ul>
+
+  <p>The fragment of HTML (within
+  the <tt>div</tt>) is entirely self-contained (and thus
+  remix-friendly). Its meaning would be preserved if it were copied
+  and pasted into another Web page. The data's structure is local
+  to the data itself: a human looking at the page could easily
+  identify the structured data by pointing to the rendered page and
+  finding the enclosing chunk of HTML. In addition, the clickable
+  links and rendered author names gain semantic meaning without
+  repeating the core data. Finally, as this is embedded RDF, the
+  extensibility and independence properties of RDF vocabularies are
+  automatically inherited: anyone can create a new vocabulary or
+  reuse portions of existing
+  vocabularies.</p>
+
+  <div align="center">
+    <a name="complexLessigBlogMarkup" id=
+    "complexLessigBlogMarkup"></a><a name="263"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 2:</strong> RDFa markup of a Creative
+        Commons license notice, illustrating all the current CC
+        Work properties, including the rendering of this markup in
+        a Web browser.
+      </caption>
+
+      <tr>
+        <td>
+	<p class="codeblock">
+&lt;div about="" typeof="cc:Work"
+     xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     align="center"&gt;
+
+   &lt;img alt="Creative Commons License"
+        src="http://i.creativecommons.org/l/by/3.0/us/88x31.png" /&gt;
+   &lt;br /&gt;
+   
+   &lt;span property="dc:title"&gt;The Lessig Blog&lt;/span&gt;,
+   a
+   &lt;span rel="dc:type" href="http://purl.org/dc/dcmitype/Text"&gt;
+     collection of texts
+   &lt;/span&gt;
+   by
+   &lt;a property="cc:attributionName"
+      rel="cc:attributionURL" href="http://lessig.org/"&gt;
+        Lawrence Lessig
+   &lt;/a&gt;,&lt;br /&gt;
+   is licensed under a
+   &lt;a rel="license" href="http://creativecommons.org/licenses/by/3.0/"&gt;
+       Creative Commons Attribution License
+   &lt;/a&gt;.&lt;br /&gt;
+   
+   There are
+   &lt;a rel="cc:morePermissions"
+      href="http://lessig.org/blog/other-license"&gt;
+         alternative licensing options
+   &lt;/a&gt;.
+&lt;/div&gt;
+      </p>
+
+          <div align="center">
+            <img src="full-rdfa-markup.png" width="600" />
+          </div>
+
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>Of course, one can continue
+  to add additional data, both visible and structured. Figure
+  <a href="#complexLessigBlogMarkup">2</a> shows a more complex
+  example that includes all Work properties currently supported by
+  Creative Commons, including how this HTML+RDFa would be rendered
+  on a Web page. Notice how properties can be associated with HTML
+  spans as well as anchors, or in fact with any HTML elements--see
+  the RDFa specification for
+  details.</p>
+
+  <p>The examples in this section
+  illustrate how publishers can specify Work properties. One can
+  also use RDFa to express License properties. This is what
+  Creative Commons does with the license description pages on its
+  own site, as described below in section <a href=
+  "#deed-RDFa">7.2</a>.</p>
+
+  <h2><a name="SECTION00052000000000000000" id=
+  "SECTION00052000000000000000">5.2 Microformats</a></h2>
+
+  <p>Microformats are a set of
+  simple, open data formats "designed for humans first and
+  machines second." They provide domain-specific syntaxes for
+  annotating data in HTML. At the moment, the two widely deployed
+  "compound" microformats annotate contact information (hCard)
+  and calendar events (hCal). Of the "elemental" microformats,
+  those meant to annotate a single data point, the most popular is
+  <tt>rel-tag</tt>, used to denote a "tag" on an item, e.g. a
+  blog post. Another elemental microformat is <tt>rel-license</tt>,
+  which is meant to indicate the current page's license and which,
+  conveniently, uses a syntax which overlaps with RDFa:
+  <tt>rel="license"</tt>. Other microformats may, over time,
+  integrate Creative Commons properties, for example when licensing
+  images, videos, and other multimedia content.<a name="tex2html51"
+  href="#foot559" id=
+  "tex2html51"><sup>14</sup></a></p>
+
+  <p>Microformat designers have
+  focused on simplicity and readability, and Creative Commons
+  encourages publishers who use microformats to make it easy for
+  tool builders to extract the relevant ccREL triples. Nonetheless,
+  microformats' syntactic simplicity comes at the cost of
+  <i>independence and extensibility</i>, which makes them limited
+  from the Creative Commons
+  perspective.</p>
+
+  <p>For example, every time a
+  Creative Commons license needs to be expressed in a new
+  context--e.g. videos instead of still images--a new microformat
+  and syntax must be designed, and all parsers must then, somehow,
+  become aware of the change. It is also not obvious how one might
+  combine different microformats on a single Web page, given that
+  the syntax rules may differ and even conflict from one
+  microformat to the next.<a name="tex2html53" href="#foot560" id=
+  "tex2html53"><sup>15</sup></a> Finally, when it comes time to
+  express complex data sets with ever expanding sets of properties,
+  e.g., scientific data, microformats do not appear to scale
+  appropriately, given their lack of vocabulary scoping and general
+  inability to mix vocabularies from independently developed
+  sources--the kind of mixing that is enabled by RDF's use of
+  namespaces.</p>
+
+  <p>Thus, Creative Commons does
+  not recommend any particular microformat syntax for ccREL, but we
+  do recommend a method for ensuring that, when publishers use
+  microformats, tool builders can extract the corresponding ccREL
+  properties: use an appropriate profile URL in the header of the
+  HTML document.<a name="tex2html55" href="#foot275" id=
+  "tex2html55"><sup>16</sup></a>This profile URL significantly
+  improves the independence and extensibility of microformats by
+  ensuring that the tools can find the appropriate parser code for
+  extracting the ccREL abstract model from the microformat, without
+  having to know about all microformats in advance. One downside is
+  that the microformat syntax then becomes less remix-friendly,
+  with two disparate fragments: one in the head to declare the
+  profile, and one in the body to express the data. Even so, the
+  profile approach is likely good enough for simple data. It is
+  worth noting that this use of a profile URL is already
+  recommended as part of microformats' best practices, though it is
+  unfortunately rarely implemented today in deployed
+  applications.</p>
+
+  <h2><a name="SECTION00053000000000000000" id=
+  "SECTION00053000000000000000">5.3 GRDDL for XML
+  Documents</a></h2>
+
+  <p>Not all documents on the web
+  are HTML: one popular syntax for representing structured data in
+  XML. Given that XML is a machine-readable syntax, often with a
+  strict schema depending on the type of data expressed, not all of
+  the principles we outlined are useful here. In particular,
+  <i>visual locality</i> is not relevant when the reader is a
+  machine rather than a human, and <i>remix-friendliness</i>
+  doesn't really apply when XML fragments are rarely remixable in
+  the first place, given schema validation. Thus, we focus on
+  <i>independence and extensibility</i>, as well as
+  <i>DRY</i>.</p>
+
+  <p>When publishing Creative
+  Commons licensing information inside an XML document, Creative
+  Commons recommends exposing a mechanism to extract the ccREL
+  abstract model from the XML, so that Creative Commons tools need
+  not know about every possible XML schema ahead of time. The W3C's
+  GRDDL recommendation performs exactly this task by letting
+  publishers specify, either in each XML document or once in an XML
+  schema, an XSL Transformation that extracts RDF/XML from
+  XML.<a name="tex2html56" href="#foot561" id=
+  "tex2html56"><sup>17</sup></a>Consider, for example, a small
+  extension of the Atom XML publishing schema for news
+  feeds:<a name="tex2html58" href="#foot562" id=
+  "tex2html58"><sup>18</sup></a></p>
+
+  <p class="codeblock">
+&lt;entry&gt;
+   &lt;title&gt;Lessig 2.0 - the site&lt;/title&gt;
+   &lt;link rel="alternate" type="text/html"
+         href="http://lessig.org/blog/2007/06/lessig_20_the_site.html" /&gt;
+   &lt;id&gt;tag:lessig.org,2007:/blog//1.3401&lt;/id&gt;
+   &lt;published&gt;2007-06-25T19:44:48Z&lt;/published&gt;
+   &lt;link rel="license" type="text/html"
+         href="http://creativecommons.org/licenses/by/3.0/us/" /&gt;
+&lt;/entry&gt;
+  </p>
+
+  <p>An appropriate XSL Transform
+  can easily process this data to extract the ccREL property that
+  specifies the
+  license:</p>
+
+  <p class="codeblock">
+&lt;rdf:RDF about="http://lessig.org/blog/2007/06/lessig_20_the_site.html"
+         xmlns:cc="http://creativecommons.org/ns#"&gt;
+   &lt;cc:license resource="http://creativecommons.org/licenses/by/3.0/us/" /&gt;
+&lt;/rdf:RDF&gt;
+  </p>
+
+  <p>Similarly, the Open Archives
+  Initiative, defines a complex XML schema for library
+  resources.<a name="tex2html60" href="#foot563" id=
+  "tex2html60"><sup>19</sup></a> These resources may include
+  megabytes of data, including sometimes the entire resource in
+  full text. Using XSLT, one can extract the relevant ccREL
+  information, exactly as above. Using GRDDL, the Open Archives
+  Initiative can specify the XSLT in its XML schema file, so that
+  all OAI documents are automatically transformable to RDF/XML,
+  which immediately conveys
+  ccREL.</p>
+
+  <h4><a name="SECTION00053010000000000000" id=
+  "SECTION00053010000000000000">Direct RDF/XML embedding in
+  XML.</a></h4>Interestingly, because RDF can be expressed using the
+  RDF/XML syntax, one might be tempted to use RDF/XML directly
+  inside an XML document with an appropriate schema definition that
+  enables such direct embedding. This very approach is taken by
+  SVG,<a name="tex2html62" href="#foot564" id=
+  "tex2html62"><sup>20</sup></a> and there are cases of SVG
+  graphics that include licensing information using directly
+  embedded
+  RDF/XML.
+
+  <p>This approach can be made
+  ccREL compliant with very little work--a simple GRDDL transform,
+  declared in the XML schema definition, that extracts the RDF/XML
+  and expresses it on its own. Note that, for ccREL compliance,
+  this transform, although simple, is necessary. The reason for its
+  necessity goes to the crux of the ccREL principles: without such
+  a transform provided by each XML schema designer, tools would
+  have to be aware of all the various XML schemas that include
+  RDF/XML in this way. For extensibility and future-proofing, ccREL
+  asks that publishers of the schema make the effort to provide the
+  extraction mechanism. With explicit extraction mechanisms,
+  publishers have a little bit more work to do, while tool builders
+  are immediately empowered to create generic programs that can
+  process data they have never seen
+  before.</p>
+
+  <h1><a name="SECTION00060000000000000000" id=
+  "SECTION00060000000000000000"></a> <a name=
+  "section:free-floating-files" id=
+  "section:free-floating-files"></a><br />
+  6 Embedding ccREL in Free-Floating Files</h1>
+
+  <p>We turn to the precise
+  Creative Commons recommendation for embedding ccREL metadata
+  inside MP3s, Word documents, and other "free-floating" content
+  that is often passed around in a peer-to-peer fashion, via email
+  or P2P networks. We note that there are two distinct issues to
+  resolve:</p>
+
+  <ul>
+    <li><em>Expression:</em> expressing the
+    abstract model using a specific syntax and embedding,
+    and</li>
+
+    <li><em>Accountability:</em> providing minimal
+    accountability for the expressed ccREL data.</li>
+  </ul>
+
+  <p>We handle accountability for
+  free-floating content by connecting any free-floating document to
+  a Web page, and placing the ccREL information on that Web page.
+  Thus, publishers of free-floating content are just as accountable
+  as publishers of Web-based content: rights are always expressed
+  on a Web page. The connection between the Web page and the binary
+  file it describes is achieved using a cryptographic hash, i.e. a
+  fingerprint, of the file. For example, the PDF file of Lawrence
+  Lessig's "Code v2" will contain a reference to <tt><a name=
+  "tex2html64" href="http://codev2.cc/download+remix" id=
+  "tex2html64">http://codev2.cc/download+remix</a></tt>, which
+  itself will contain a reference to the SHA1 hash of the PDF file.
+  The owner of the URL <tt><a name="tex2html65" href=
+  "http://codev2.cc/download+remix" id=
+  "tex2html65">http://codev2.cc/download+remix</a></tt> is thus
+  taking responsibility for the ccREL statements it makes about the
+  file.</p>
+
+  <p>For expression, we recommend
+  XMP. XMP has the broadest support of any embedded metadata format
+  (perhaps it is the only such format with anything approaching
+  broad support) across many different media formats. With the
+  exception of media formats where a workable embedded metadata
+  format is already ubiquitous (e.g. MP3), Creative Commons
+  recommends adopting XMP as an embedded metadata standard and
+  using the following two fields in
+  particular:</p>
+
+  <ul>
+    <li>Web reference: value of
+    <tt>xapRights:WebStatement</tt></li>
+
+    <li>License: value of
+    <tt>cc:license</tt></li>
+  </ul>
+
+  <p>Consider our example of
+  Lessig's "Code v2", a Creative Commons licensed,
+  community-edited second version of his original "Code and Other
+  Laws of Cyberspace." The PDF of this book, available at
+  <tt><a name="tex2html66" href=
+  "http://pdf.codev2.cc/Lessig-Codev2.pdf" id=
+  "tex2html66">http://pdf.codev2.cc/Lessig-Codev2.pdf</a></tt>,
+  contains XMP metadata as
+  follows:</p>
+
+  <p class="codeblock">
+&lt;?xpacket begin="" id=""?&gt;
+&lt;x:xmpmeta xmlns:x="adobe:ns:meta/"&gt;
+  &lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+
+     &lt;rdf:Description rdf:about="" xmlns:xapRights="http://ns.adobe.com/xap/1.0/rights/"&gt;
+        &lt;xapRights:Marked&gt;True&lt;/xapRights:Marked&gt;
+        &lt;xapRights:WebStatement rdf:resource="http://codev2.cc/download+remix/" /&gt;
+     &lt;/rdf:Description&gt;
+
+     ...
+
+     &lt;rdf:Description rdf:about="" xmlns:cc="http://creativecommons.org/ns#"&gt;
+        &lt;cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/2.5/" /&gt;
+     &lt;/rdf:Description&gt;
+
+  &lt;/rdf:RDF&gt;
+&lt;/x:xmpmeta&gt;
+&lt;?xpacket end="r"?&gt;
+
+  </p>
+
+  <p>Notice how this is RDF/XML,
+  including a <tt>xapRights:WebStatement</tt> pointer to the web
+  page <tt><a name="tex2html67" href=
+  "http://codev2.cc/download+remix/" id=
+  "tex2html67">http://codev2.cc/download+remix/</a></tt>, which
+  itself contains
+  RDFa:</p>
+
+  <p class="codeblock">
+Any derivative must be licensed under a
+&lt;a about="urn:sha1:W4XGZGCD4D6TVXJSCIG3BJFLJNWFATTE"
+   rel="license"
+   href="http://creativecommons.org/licenses/by-sa/2.5/"&gt;
+       Creative Commons Attribution-ShareAlike 2.5 License
+&lt;/a&gt;
+  </p>
+
+  <p>This RDFa references the PDF
+  using its SHA1 hash--a secure fingerprint of the file that
+  matches only the given PDF file--and declares its Creative
+  Commons license. Thus, anyone that finds the "Code v2" PDF can
+  find its <tt>WebStatement</tt> pointer, look up that URL, verify
+  that it properly references the file via its SHA1 hash, and
+  confirm the file's Creative Commons license on the web-based
+  deed.</p>
+
+  <h1><a name="SECTION00070000000000000000" id=
+  "SECTION00070000000000000000">7 Examples and Use
+  Cases</a></h1>
+
+  <p>This section describes
+  several examples, first by publishers of Creative Commons
+  licensed works, then by tool builders who wish to consume the
+  licensing information. Some of these examples include existing,
+  real implementations of ccREL, while others are potential
+  implementations and applications we believe would significantly
+  benefit from
+  ccREL.</p>
+
+  <h2><a name="SECTION00071000000000000000" id=
+  "SECTION00071000000000000000">7.1 How Publishers Can Use
+  ccREL</a></h2>
+
+  <p>Publishers can mix ccREL
+  with other markup with great flexibility. Thanks to ccREL's
+  <i>independence and extensibility</i> principle, publishers can
+  use ccREL descriptions in combination with additional attributes
+  taken from other publishers, or with entirely new attributes they
+  define for their own purposes. Thanks to ccREL's <i>DRY</i>
+  principle, even small publishers get the benefit of updating data
+  in one location and automatically keeping the human- and
+  machine-readable in
+  sync.</p>
+
+  <div align="center">
+    <a name="fig:bitmunk" id=
+    "fig:bitmunk"></a><a name="565"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 3:</strong> Markup for a Bitmunk Song: this
+        is a real excerpt of the actual HTML markup used on the
+        <tt>bitmunk.com</tt> web site, slightly simplified and
+        indented for readability.
+      </caption>
+
+      <tr>
+        <td>
+        	
+			<p class="codeblock">
+&lt;div class="mediaDetails haudio" 
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:commerce="http://purl.org/commerce/elements/1.0/"
+     xmlns:hmedia="http://purl.org/hmedia/elements/1.0/"
+     about="#album-6579151"&gt;
+...
+    &lt;a id="mediaImageLink" rel="hmedia:depiction" 
+       href="http://www.bitmunk.com/view/image/6579151"&gt;
+...
+    &lt;h1 property="dc:title" class="mediaTitle album fn"&gt;Lifeseeker&lt;/h1&gt;
+...
+    &lt;span property="dc:creator" class="fn"&gt;Lifeseeker&lt;/span&gt;
+...
+    &lt;span property="dc:contributor" class="fn"&gt;(P) 2005 One In A Million Records&lt;/span&gt;
+...
+    &lt;span property="dc:date" class="published" title="2007-11-18T11:23:07-05:00"
+          content="2007-11-18T11:23:07-05:00" datatype="xsd:date"&gt;
+        2002-07-23
+    &lt;/span&gt;
+...
+    &lt;a href="/browse/genre/audio_album/59"
+       property="dc:type" class="category"&gt;Hip Hop and Rap&lt;/a&gt;
+
+    &lt;span class="detailLabel"&gt;Tracks:&lt;/span&gt;
+    16 (&lt;abbr property="hmedia:duration" class="duration" 
+    title="PT1H13M37S" content="PT1H13M37S" 
+    datatype="xsd:duration"&gt;1:13:37&lt;/span&gt;)
+...
+    &lt;span class="detailLabel"&gt;Licenses:&lt;/span&gt;
+    &lt;img property="dc:license" class="licenseIcon"
+         src="/themes/bm2/images/licenses/sc-sm.png"
+         alt="Standard Copyright" title="Standard Copyright" 
+         content="Standard Copyright"/&gt;
+...
+&lt;/div&gt;
+			</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h3><a name="SECTION00071100000000000000" id=
+  "SECTION00071100000000000000">Mixing Content with Different
+  Licenses</a></h3>
+
+  <p>A common use case for Web
+  publishers working in a mashup-friendly world is the issue of
+  mixing content with different licenses. Consider, for example,
+  what happens if Larry Lessig's blog reuses an image published by
+  another author and licensed for non-commercial use. Recall that
+  Lessig's Blog is licensed to permit commercial
+  use.</p>
+
+  <p>The HTML markup in this case
+  is
+  straightforward:</p>
+
+  <p class="codeblock">
+&lt;div about="" xmlns:cc="http://creativecommons.org/ns#"&gt;
+   This page, by
+   &lt;a property="cc:attributionName" rel="cc:attributionURL"
+      href="http://lessig.org/"&gt;
+        Lawrence Lessig
+   &lt;/a&gt;,
+   is licensed under a
+   &lt;a rel="license"
+       href="http://creativecommons.org/licenses/by/3.0/"&gt;
+         Creative Commons Attribution License
+   &lt;/a&gt;.
+
+   &lt;div about="/photos/constitution.jpg"&gt;
+      The photo of the constitution used in this post was originally published by
+      &lt;a rel="dc:source" href="http://example.org/"&gt;Joe Example&lt;/a&gt;, and is licensed under a
+      &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc/3.0/"&gt;
+        Creative Commons Attribution-NonCommercial License
+      &lt;/a&gt;.
+   &lt;/div&gt;
+&lt;/div&gt;
+</p>
+
+  <p>The inner
+  <tt>&lt;div&gt;</tt> uses the <tt>about</tt> attribute to
+  indicate that its statements concern the photo in question. A
+  link to the original source is provided using the
+  <tt>dc:source</tt> property, and a different license pointer is
+  given for this photo using the normal anchor with a
+  <tt>rel="license"</tt>
+  attribute.</p>
+
+  <h3><a name="SECTION00071200000000000000" id=
+  "SECTION00071200000000000000">hAudio</a></h3>
+
+  <p>Bitmunk is a service that
+  supports artists with a legal, copyright-aware, content
+  distribution service. The service needed a mechanism for
+  embedding structured data about songs and albums directly into
+  their web pages, including licensing information, so that browser
+  add-ons might provide additional functionality around the music,
+  e.g. comparing the price of a particular song at various online
+  stores. Bitmunk first created a microformat called hAudio. They
+  soon realized, however, that they would be duplicating fields
+  when it came time to define hVideo, and that these duplicated
+  fields would no longer be compatible with those of hAudio. More
+  immediately problematic, hAudio's basic fields, e.g. title, would
+  not be compatible with other "title" fields of other
+  microformats.</p>
+
+  <p>Thus, Bitmunk created the
+  hAudio RDFa vocabulary. The design process for this vocabulary
+  immediately revealed separate, logical components: Dublin Core
+  for basic properties e.g. <tt>title</tt>, Creative Commons for
+  licensing, a new vocabulary called "hMedia" for media-specific
+  properties e.g. <tt>duration</tt>, and a new vocabulary called
+  "hCommerce" for transaction-specific properties e.g.
+  <tt>price</tt>. Bitmunk was thus able to reuse two existing
+  vocabularies and add features. It was also able to clearly
+  delineate logical components to make it particularly easy for
+  other vocabulary developers to reuse only certain components of
+  the hAudio vocabulary, e.g. hCommerce. Meanwhile, all Creative
+  Commons licensing information is still expressible without
+  alteration.</p>
+
+  <p>Figure <a href=
+  "#fig:bitmunk">3</a> shows an excerpt of the markup available
+  from Bitmunk at <tt><a name="tex2html69" href=
+  "http://bitmunk.com/view/media/6579151" id=
+  "tex2html69">http://bitmunk.com/view/media/6579151</a></tt>. Note
+  that this particular sample is not CC-licensed: it uses standard
+  copyright. A CC-licensed album would be marked up in the same
+  way, with a different <tt>license</tt> value: Bitmunk was able to
+  develop its vocabulary independent of ccREL, and can now
+  integrate with ccREL simply by adding the appropriate
+  attributes.</p>
+
+  <div align="center">
+    <a name="fig:flickr" id=
+    "fig:flickr"></a><a name="566"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 4:</strong> A Flickr Photo Page with RDFa:
+        this is an excerpt from a Flickr photo page with small
+        amounts of additional markup to show how one would
+        integrate RDFa. The rendering of the HTML is identical with
+        the added RDFa properties. Note the Flickr machine tag
+        <tt>upcoming:event</tt>, which references an event at
+        <tt>upcoming.org</tt>. This machine tag is, in fact, an RDF
+        triple, easily expressed in RDFa alongside existing Flickr
+        information and CC licensing.
+      </caption>
+
+      <tr>
+        <td>
+        	<p class="codeblock">
+&lt;div xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:flickr="http://flickr.com/ns#"
+     about="http://www.flickr.com/photos/laughingsquid/2034629532/"&gt;
+...
+    &lt;h1 property="dc:title"&gt;NewTeeVee Live Game Show&lt;/h1&gt;
+...
+    &lt;img rel="flickr:defaultPhoto"
+         src="http://farm3.static.flickr.com/2320/2034629532_02085434dd.jpg?v=0" /&gt;
+
+...
+    &lt;div property="dc:description"&gt;
+        See the blog post for more info:
+        &lt;a href="http://laughingsquid.com/a-few-random-newteevee-live-photos/"&gt;
+            A Few Random NewTeeVee Live Photos
+        &lt;/a&gt;
+    &lt;/div&gt;
+...
+
+    This photo is licensed under a
+    &lt;a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/2.0/"&gt;
+        Creative Commons license
+    &lt;/a&gt;.
+    
+    If you use this photo within the terms of the license or make
+    special arrangements to use the photo, please list the photo credit as
+    
+    &lt;span property="cc:attributionName"&gt;Scott Beale / Laughing Squid&lt;/span&gt;
+    
+    and link the credit to
+    
+    &lt;a rel="cc:attributionURL" href="http://laughingsquid.com"&gt;
+        laughingsquid.com
+    &lt;/a&gt;.
+
+...
+    Uploaded on
+    &lt;span property="flickr:uploaded" content="2007-11-15"&gt;
+        November 15, 2007
+    &lt;/span&gt;
+...
+    &lt;h4&gt;Tags&lt;/h4&gt;
+    &lt;a rel="flickr:tag" href="/photos/laughingsquid/tags/newteevee/"&gt;NewTeeVee&lt;/a&gt;
+    &lt;a rel="flickr:tag" href="/photos/laughingsquid/tags/gigaom/"&gt;GigaOm&lt;/a&gt;
+...
+    &lt;a rel="upcoming:event" href="http://upcoming.org/event/286436"&gt;upcoming:event=286436&lt;/a&gt;
+...
+&lt;/div&gt;        		
+        	</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h3><a name="SECTION00071300000000000000" id=
+  "SECTION00071300000000000000">Flickr</a></h3>
+
+  <p>Flickr hosts approximately
+  50 million CC-licensed images (as of October 2007). Currently
+  Flickr denotes a license on each image's page with a link to the
+  relevant license qualified by <tt>rel="license"</tt>. This ad-hoc
+  convention, encouraged by the microformats effort, was
+  "grandfathered" into RDFa thanks to the reserved HTML keyword
+  <tt>license</tt>. Unfortunately, it works only for simple use
+  cases, with a single image on a single page. This approach breaks
+  down when multiple images are viewed on a single page, or when
+  further information, such as the photographer's name, is
+  required.</p>
+
+  <p>Flickr could significantly
+  benefit from the ccREL recommendations, by providing, in addition
+  to simple license
+  linking:</p>
+
+  <ul>
+    <li>License assertions scoped to the image
+    being licensed.</li>
+
+    <li>Attribution details.</li>
+
+    <li>A <tt>cc:additionalPermissions</tt>
+    reference to commercial licensing brokers and a
+    <tt>dc:source</tt> reference to parent works.</li>
+
+    <li>XMP embedding in images
+    themselves.</li>
+  </ul>
+
+  <p>In addition, Flickr recently
+  deployed "machine tags," where photographers can add metadata
+  about their images using custom properties. Flickr's machine tags
+  are, in fact, a subset of RDF, which can be represented easily
+  using RDFa. Thus, Creative Commons licensing can be easily
+  expressed alongside Flickr's machine tags using the same
+  technology, without
+  interfering.</p>
+
+  <p>Figure <a href=
+  "#fig:flickr">4</a> shows how the CC-licensed photo at
+  <tt><a name="tex2html71" href=
+  "http://www.flickr.com/photos/laughingsquid/2034629532/" id=
+  "tex2html71">http://www.flickr.com/photos/laughingsquid/2034629532/</a></tt>
+  would be marked up using ccREL, including the machine tag
+  <tt>upcoming:event</tt> that associates the photo with an event
+  at <tt><a name="tex2html72" href="http://upcoming.org" id=
+  "tex2html72">http://upcoming.org</a></tt>.</p>
+
+  <div align="center">
+    <a name="fig:nature" id=
+    "fig:nature"></a><a name="567"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 5:</strong> Markup for a Nature Precedings
+        article, including how RDFa might be integrated seamlessly
+        into the existing markup. The property <tt>nature:tag</tt>
+        is used to indicate a Nature-defined way of tagging
+        content, though another vocabulary could easily be used
+        here.
+      </caption>
+
+      <tr>
+        <td>
+        	<p class="codeblock">
+&lt;div xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#"
+     xmlns:prism="http://prismstandard.org/namespaces/1.2/basic/"
+     xmlns:foaf="http://xmlns.com/foaf/0.1/" about="/documents/1290/version/1"&gt;
+
+  &lt;h2 property="dc:title"&gt;An Olfactory Receptor Pseudogene whose Function emerged in Humans&lt;/h2&gt;
+  ...
+  &lt;span rel="dc:creator"&gt;&lt;span property="foaf:name"&gt;Peter Lai&lt;/span&gt;&lt;/span&gt; &lt;sup&gt;1&lt;/sup&gt;,
+    
+  &lt;a rel="dc:creator" href="http://precedings.nature.com/account/show/1068"&gt;
+    &lt;span property="foaf:name"&gt;Gautam Bahl&lt;/span&gt;
+  &lt;/a&gt;&lt;sup&gt;2&lt;/sup&gt;,
+  ...
+  &lt;dt class="doctype"&gt;Document Type:&lt;/dt&gt;&lt;dd property="dc:type"&gt;Manuscript&lt;/dd&gt;
+
+  Received &lt;span property="dc:date"&gt;02 November 2007 21:20 UTC&lt;/span&gt;;
+  Posted &lt;span property="prism:publicationDate"&gt;05 November 2007&lt;/span&gt;
+  ...
+  &lt;a rel="prism:category" href="http://precedings.nature.com/subjects/biotechnology"&gt;
+    Biotechnology
+  &lt;/a&gt;,
+  ...
+  &lt;ul id="revision-1321-tags" class="taglist"&gt;
+    &lt;li&gt; &lt;a rel="nature:tag" href="http://precedings.nature.com/tags/olfactory+receptors"&gt;
+           olfactory receptors
+         &lt;/a&gt;
+    &lt;/li&gt;
+    ...
+  &lt;/ul&gt;
+  ...
+  This document is licensed to the public under the
+  &lt;a rel="license" href="http://creativecommons.org/licenses/by/2.5/"&gt;
+    Creative Commons Attribution 2.5 License
+  &lt;/a&gt;
+  ...
+  &lt;!-- Citation --&gt;
+  &lt;dt class="abstract"&gt;How to cite this document:&lt;/dt&gt;
+  &lt;dd&gt;
+    &lt;p&gt; &lt;span  property="cc:attributionName"&gt;
+          Lai, Peter, Bahl, Gautam, Gremigni, Maryse, Matarazzo, Valery ,
+          Clot-Faybesse, Olivier, Ronin, Catherine, and Crasto, Chiquito.
+          An Olfactory Receptor Pseudogene whose Function emerged in Humans.
+        &lt;/span&gt;
+        Available from Nature Precedings &amp;#060;
+        &lt;a rel="cc:attributionURL" href="http://dx.doi.org/10.1038/npre.2007.1290.1"&gt;
+          http://dx.doi.org/10.1038/npre.2007.1290.1
+        &lt;/a&gt;&amp;#062; (2007)
+    &lt;/p&gt;
+  &lt;/dd&gt;
+...
+&lt;/div&gt;
+</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div align="center">
+    <a name="fig:nature-precedings" id=
+    "fig:nature-precedings"></a><a name="445"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 6:</strong> Portions of a Nature Precedings
+        paper, marked up with RDFa. An RDFa-aware browser (in this
+        case any normal browser using the RDFa Bookmarklets)
+        detects the markup, highlighting the title and Creative
+        Commons license, and revealing the corresponding RDF
+        triples.
+      </caption>
+
+      <tr>
+        <td>
+          <div align="center">
+            <img width="600" height="487" align="bottom" border="0"
+            src="./nature-precedings.png" alt=
+            "Image nature-precedings" />
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h3><a name="SECTION00071400000000000000" id=
+  "SECTION00071400000000000000">Nature Precedings</a></h3>
+
+  <p><em>Nature</em>, one of the
+  world's top scientific journals, recently launched a web-only
+  "precedings" site, where early results can be announced rapidly
+  in advance of full-blown peer review. Papers on <em>Nature
+  Precedings</em> are distributed under a Creative Commons license.
+  Like Flickr, <em>Nature Precedings</em> currently uses CC's prior
+  metadata recommendation: RDF/XML included in an HTML comment.
+  Nature could significantly benefit from the ccREL recommendation,
+  which would let them publish structured Creative Commons
+  licensing information in a more robust, more extensible, and more
+  human-readable
+  way.</p>
+
+  <p>Consider, for example, the
+  Nature Preceding paper at <tt><a name="tex2html75" href=
+  "http://precedings.nature.com/documents/1290/version/1" id=
+  "tex2html75">http://precedings.nature.com/documents/1290/version/1</a></tt>.
+  Figure <a href="#fig:nature">5</a> shows how the markup at that
+  page can be extended with simple RDFa attributes, using the
+  Dublin Core, Creative Commons, FOAF, and PRISM publication
+  vocabularies.<a name="tex2html76" href="#foot568" id=
+  "tex2html76"><sup>21</sup></a>Notice how any HTML element,
+  including the existing <tt>H1</tt> used for the title, can be
+  used to carry RDFa attributes. Figure <a href=
+  "#fig:nature-precedings">6</a> shows how this page could appear
+  in an RDFa-aware
+  browser.</p>
+
+  <h3><a name="SECTION00071500000000000000" id=
+  "SECTION00071500000000000000">Scientific Data</a></h3>
+
+  <p>Open publication of
+  scientific data on the Internet has begun, with the Nature
+  Publishing Group recently announcing the release of genomic data
+  sets under a Creative Commons license.<a name="tex2html78" href=
+  "#foot569" id="tex2html78"><sup>22</sup></a> Beyond simple
+  licensing, thousands of new metadata vocabularies and properties
+  are being developed to express research results. Creative
+  Commons, through its Science Commons subsidiary,<a name=
+  "tex2html80" href="#foot570" id="tex2html80"><sup>23</sup></a> is
+  playing an active role here, working to remove barriers to
+  scientific cooperation and sharing. Science Commons is
+  specifically encouraging the creation of RDF-based vocabularies
+  for describing scientific information and is stimulating
+  collaboration among research communities with tools that build on
+  RDF's extensibility and
+  interoperability.</p>
+
+  <div align="center">
+    <a name="figure:scientific-data-browser" id=
+    "figure:scientific-data-browser"></a><a name="462"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 7:</strong> A simple rendering of a
+        bibliographic entry with extra scientific data.
+      </caption>
+
+      <tr>
+        <td><img width="600" height="208" align="bottom" border="0"
+        src="./scientific-data-browser.png" alt=
+        "Image scientific-data-browser" /></td>
+      </tr>
+    </table>
+  </div>
+
+  <p>As these vocabularies become
+  more widespread, it's easy to envision uses of ccREL and RDFa
+  that extend the bibliographic and licensing markup to include
+  these new scientific data tags. Tools may then emerge to take
+  advantage of this additional markup, enabling dynamic,
+  distributed scientific collaboration through interoperable
+  referencing of scientific
+  concepts.</p>
+
+  <p>Imagine, for example, an
+  excerpt from a (hypothetical) Web-based newsletter about genomics
+  research, which references an (actual) article from <em>BioMed
+  Central Neurosciences</em>, as it might be rendered by a browser
+  (Figure <a href="#figure:scientific-data-browser">7</a>). The
+  words "recent study on rat brains", and "CEBP-beta" are
+  clickable links, leading respectively, to a Web page for the
+  paper, and a Web page that describes the protein CEBP-5#5 in the
+  Uniprot protein
+  database.</p>
+
+  <p>The RDFa generating this
+  excerpt could
+  be</p>
+
+  <p class="codeblock">
+&lt;div
+     xmlns:OBO_REL="http://www.obofoundry.org/ro/ro.owl#"
+     xmlns:UNIPROT="http://purl.uniprot.org/uniprot/"&gt;
+
+   A &lt;a href="http://www.biomedcentral.com/1471-2202/6/69"&gt;
+      recent study on rat brains
+   &lt;/a&gt;
+   by von Gertten &lt;em&gt;et. al.&lt;/em&gt; reports that
+ 
+   &lt;div about="http://purl.org/obo/owl/GO#GO_0050729"&gt;
+     &lt;span property="rdfs:label"&gt;inflammatory stimuli&lt;/span&gt;
+ 
+     upregulate expression of
+ 
+     &lt;a rel="OBO_REL:precedes"
+        href="http://purl.uniprot.org/uniprot/P17676"&gt;
+       &lt;span property="rdfs:label"&gt;CEPB-beta&lt;/span&gt;
+     &lt;/a&gt;
+   &lt;/div&gt;
+&lt;/div&gt;
+</p>
+
+  <p>This RDFa not only links to
+  the paper in the usual way, but it also provides machine-readable
+  information that this is a statement about inflammatory stimuli
+  (as defined by the Open Biomedical Ontologies initiative)
+  activating expression of the CEPB protein (as specified in the
+  UniProt database of proteins). Since the URI of the protein is
+  visually meaningful, it can be marked up with a clickable link
+  that also provides the object of a
+  triple.</p>
+
+  <h3><a name="SECTION00071600000000000000" id=
+  "SECTION00071600000000000000">Additional
+  Permissions</a></h3>
+
+  <p>A CC license grants certain
+  permissions to the public; others may be available privately. A
+  coarse-grained "more permissions" link indicates this
+  availability. Creative Commons has branded this scheme
+  <b>CC+</b>. Also, since CC licenses are non-exclusive, other
+  options for a work may be offered in addition to a CC license.
+  Here is an example from <tt><a name="tex2html83" href=
+  "http://magnatune.com" id=
+  "tex2html83">http://magnatune.com</a></tt>, showing the use of
+  RDFa to annotate the standard CC license image and also the
+  Magnatune
+  logo:</p>
+
+  <p class="codeblock">
+&lt;a href="http://creativecommons.org/licenses/by-nc-sa/1.0/" rel="license"&gt;
+   &lt;img src="http://he3.magnatune.com/img/somerights2.gif"&gt;
+&lt;/a&gt;
+
+&lt;a href="https://magnatune.com/artists/license/?artist=Anup&amp;album=Embrace&amp;genre=World"
+   xmlns:cc="http://creativecommons.org/ns#" rel="cc:morePermissions"&gt;
+      &lt;img border=0 src="http://he3.magnatune.com/img/button_license2.gif" /&gt;
+&lt;/a&gt;
+  </p>
+
+  <p>This snippet
+  contains two statements: the public CC license and the
+  availability of more permissions. Sophisticated users of this
+  protocol will one day publish company, media, or genre-specific
+  descriptions of the permissions available privately at the target
+  URL. Tools built to recognize a Creative Commons license will
+  still be able to detect the Creative Commons license after the
+  addition of the <tt>morePermissions</tt> property, which is
+  exactly the desired behavior. More sophisticated versions of the
+  tools could inform the user that "more permissions" may be
+  granted by following the indicated
+  link.</p>
+
+  <div align="center">
+    <a name="deed-figure" id=
+    "deed-figure"></a><a name="490"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 8:</strong> Part of the HTML code for the
+        Creative Commons Attribution, No Derivatives Deed (slightly
+        simplified for presentation purposes) showing the use of
+        ccREL License Properties.
+      </caption>
+
+      <tr>
+        <td>
+        	<p class="codeblock">
+&lt;h3&gt;You are free:&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li class="license share"&gt;
+      &lt;strong&gt;to Share&lt;/strong&gt; --
+      to
+      &lt;span rel="cc:permits"
+            href="http://creativecommons.org/ns#Distribution"&gt;copy&lt;/span&gt;,
+      &lt;span rel="cc:permits"
+            href="http://creativecommons.org/ns#Reproduction"&gt;distribute&lt;/span&gt;,
+      display, and
+      perform the work
+  &lt;/li&gt;
+  
+  &lt;div id="deed-conditions"&gt;
+    &lt;h3&gt;Under the following conditions:&lt;/h3&gt;
+    &lt;ul align="left" dir=""&gt; 
+    
+       &lt;li rel="cc:requires"
+           href="http://creativecommons.org/ns#Attribution" class="license by"&gt;
+           &lt;p&gt;&lt;strong&gt;Attribution&lt;/strong&gt;. 
+           &lt;span id="attribution-container"&gt;
+           You must attribute the work in the manner specified by
+           the author or licensor   (but not in any way that
+           suggests that they endorse you or your use of the work).
+           &lt;/span&gt;
+       &lt;/li&gt;
+       
+       &lt;li class="license nd"&gt;
+           &lt;p&gt;&lt;strong&gt;No Derivative Works&lt;/strong&gt;. 
+             &lt;span&gt;You may not alter, transform, or build upon this work.
+             &lt;/span&gt;
+       &lt;/li&gt;
+       
+       &lt;li rel="cc:requires"
+           href="http://creativecommons.org/ns#Notice"&gt;
+             For any reuse or distribution, you must make clear to
+             others the license terms of this work. The best way to
+             do this is with a link to this web page.
+       &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/ul&gt;
+			</p>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h2><a name="SECTION00072000000000000000" id=
+  "SECTION00072000000000000000"></a> <a name="deed-RDFa" id=
+  "deed-RDFa"></a><br />
+  7.2 Publishing license properties</h2>
+
+  <p>As mentioned
+  above, Creative Commons doesn't expect content publishers to deal
+  with license properties. However, others may find themselves
+  publishing licenses using ccREL's license properties. Here, too,
+  RDFa is available as a framework for creating license
+  descriptions that are human-readable, from which automated tools
+  can also extract the required
+  properties.</p>
+
+  <p>One example
+  of this is Creative Commons itself, and the publication of the
+  "Commons Deeds". Figure <a href="#deed-figure">8</a> shows the
+  HTML source of the Web page at <tt><a name="tex2html85" href=
+  "http://creativecommons.org/licenses/by-nd/3.0/us/" id=
+  "tex2html85">http://creativecommons.org/licenses/by-nd/3.0/us/</a></tt>
+  which describes the U.S. version of the CC
+  Attribution-NoDerivatives license. As this markup shows, any HTML
+  attribute, including <tt>LI</tt>, can carry RDFa attributes. The
+  <tt>href</tt> attribute, typically used for clickable links, can
+  be used to indicate a structured relation, even when the element
+  to which it is attached is not an HTML
+  anchor.</p>
+
+  <p>In this
+  markup, the "Attribution-NoDerivatives" license permits
+  distribution and reproduction, while requiring attribution and
+  notice. Recall that ccREL is meant to be interpreted <i>in
+  addition</i> to the baseline copyright regulation. In other
+  words, the restriction "NoDerivatives" is not expressed in
+  ccREL, since that is already a default in copyright law. The
+  opposite, where derivative works <i>are</i> allowed, would be
+  denoted with an additional CC
+  permission.</p>
+
+  <p>Tool
+  builders who then want to extract RDF from this page can do so
+  using, for example, the W3C's RDFa Distiller,<a name="tex2html86"
+  href="#foot571" id="tex2html86"><sup>24</sup></a>which, when
+  given the CC Deed URL <tt><a name="tex2html88" href=
+  "http://creativecommons.org/licenses/by-nd/3.0/" id=
+  "tex2html88">http://creativecommons.org/licenses/by-nd/3.0/</a></tt>,
+  produces the RDF/XML serialization of the same structured data,
+  ready to be imported into any programming language with RDF/XML
+  support:</p>
+
+  <p class="codeblock">
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;rdf:RDF
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"&gt;
+     &lt;rdf:Description rdf:about="http://creativecommons.org/licenses/by-nd/3.0/"&gt;
+        &lt;cc:requires rdf:resource="http://creativecommons.org/ns#Notice"/&gt;
+        &lt;cc:requires rdf:resource="http://creativecommons.org/ns#Attribution"/&gt;
+        &lt;cc:permits rdf:resource="http://creativecommons.org/ns#Distribution"/&gt;
+        &lt;cc:permits rdf:resource="http://creativecommons.org/ns#Reproduction"/&gt;
+   &lt;/rdf:Description&gt;
+&lt;/rdf:RDF&gt;
+  </p>
+
+  <h2><a name="SECTION00073000000000000000" id=
+  "SECTION00073000000000000000">7.3 How Tool Builders Can Use
+  ccREL</a></h2>
+
+  <h3><a name="SECTION00073100000000000000" id=
+  "SECTION00073100000000000000">MozCC</a></h3>
+
+  <p>MozCC<a name="tex2html89" href="#foot572" id=
+  "tex2html89"><sup>25</sup></a> is an extension to Mozilla-based
+  browsers for extracting and displaying metadata embedded in web
+  pages. MozCC was initially developed in 2004 as a work-around to
+  some of the deficiencies in the prior Creative Commons metadata
+  recommendation. That version of MozCC specifically looked for
+  Creative Commons RDF in HTML comments, a place most other parsers
+  ignore. Once the metadata detected, MozCC provided users with a
+  visual notification, via icons in the status bar, of the Creative
+  Commons license. In addition, MozCC provided a simple interface
+  to expose the work and license
+  properties.</p>
+
+  <p>Since the
+  initial development, MozCC has been rewritten to provide general
+  purpose extraction of all RDFa metadata, as well as a specialized
+  interface for ccREL. The status-bar icons and detailed metadata
+  visualization features have been preserved and expanded. A MozCC
+  user receives immediate visual cues when he encounters a page
+  with RDFa metadata, including specific CC-branded icons when the
+  metadata indicates the presence of a Creative Commons license.
+  The experience is pictured in Figure <a href=
+  "#figure:mozcc">9</a>.</p>
+
+  <div align="center">
+    <a name="figure:mozcc" id=
+    "figure:mozcc"></a><a name="514"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 9:</strong> The MozCC Mozilla Add-On. The
+        status bar shows a CC icon that indicates to the user that
+        the page is CC-licensed. A click on the icon reveals the
+        detailed metadata in a separate window.
+      </caption>
+
+      <tr>
+        <td>
+          <div align="center">
+            <img width="600" height="386" align="bottom" border="0"
+            src="./mozcc.png" alt="Image mozcc" />
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <p>MozCC
+  processes pages by listening for load events and then calling one
+  or more metadata extractors on the content. Metadata extractors
+  are JavaScript classes registered on browser startup; they may be
+  provided by MozCC or other extensions. MozCC ships with
+  extractors for all current and previous Creative Commons metadata
+  recommendations, in particular ccREL. Each registered extractor
+  is called for every page. The extractors are passed information
+  about the page to be processed, including the URL and whether the
+  page has changed since it was last processed. This allows
+  individual extractors to determine whether re-processing is
+  needed. The RDFa extractor, for example, can stop processing if
+  it sees the document hasn't been updated. An extractor which
+  looks for metadata specified in external files via
+  <tt>&lt;link&gt;</tt> tags, however, would still retrieve them
+  and see if they have been
+  updated.</p>
+
+  <p>The results
+  of each extractor are stored in a local metadata store. In the
+  case of Firefox, this is a SQLite database stored as part of the
+  user's profile. The local metadata store serves as an abstraction
+  layer between the extractors and user interface code. The
+  contents are visible through the Page Info interface. The current
+  software only exposes this information as status bar icons; one
+  can imagine other user interfaces (provided by MozCC or other
+  extensions) which expose the metadata in different
+  ways.</p>
+
+  <h3><a name="SECTION00073200000000000000" id=
+  "SECTION00073200000000000000">Operator</a></h3>
+
+  <p>Operator<a name="tex2html92" href="#foot573" id=
+  "tex2html92"><sup>26</sup></a>is an add-on to the Firefox browser
+  that detects microformats and RDFa in the web pages a user
+  visits. Operator can be extended with "action scripts" that are
+  triggered by specific data found in the web page. The regions of
+  the page that contain data are themselves highlighted so that
+  users can visually detect and receive contextual information
+  about the
+  data.</p>
+
+  <p>It is
+  relatively straight-forward to write a Creative Commons action
+  script that finds all Creative Commons licensed content inside a
+  web page by looking for the RDFa syntax. This allows users to
+  easily identify their rights and responsibilities when reusing
+  content they find on the web. No matter the item, even types of
+  items with properties currently unanticipated, the simple action
+  script can detect them, display the item's name and rights
+  description.</p>
+
+  <p>Putting
+  aside for now the definition of some utility functions, an action
+  handler for the license property is declared as follows:<a name=
+  "tex2html94" href="#foot574" id=
+  "tex2html94"><sup>27</sup></a></p>
+
+  <p class="codeblock">
+RDFa.DEFAULT_NS.cc = "http://creativecommons.org/ns#";
+RDFa.ns.cc = function(name) { return RDFa.DEFAULT_NS.cc + name; };
+
+var view_license = {
+    description: "View License",
+    shortDescription: "View",
+    scope: {
+        semantic: {
+            "RDF": {
+                property : RDFa.ns.cc("license"),
+                defaultNS : RDFa.ns.cc("")
+            }
+        }
+    },
+    doAction: function(semanticObject, semanticObjectType, propertyIndex) {
+        if (semanticObjectType == "RDF") {
+            return semanticObject.license;
+        }
+    }
+};
+
+SemanticActions.add("view_license", view_license);
+  </p>
+
+  <p>Once this
+  action script enabled, Operator automatically lights up Creative
+  Commons licensed "Resources" it finds on the web. For example,
+  browsing to the Lessig blog, Operator highlights two resources
+  that are CC-licensed: the Lessig Blog itself, and a Creative
+  Commons licensed photo used in one of the blog posts. The result
+  is shown in Figure <a href=
+  "#figure:operator">10</a>.</p>
+
+  <div align="center">
+    <a name="figure:operator" id=
+    "figure:operator"></a><a name="533"></a>
+
+    <table>
+      <caption align="bottom">
+        <strong>Figure 10:</strong> Operator with a CC action
+        script on Lessig's Blog. Notice the two resources, each
+        with its "view license" action.
+      </caption>
+
+      <tr>
+        <td>
+          <div align="center">
+            <img width="640" height="543" align="bottom" border="0"
+            src="./lessig-operator.png" alt=
+            "Image lessig-operator" />
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <h1><a name="SECTION00080000000000000000" id=
+  "SECTION00080000000000000000">8 Conclusion</a></h1>
+
+  <p>Creative
+  Commons wants to make it easy for artists and scientists to build
+  upon the works of others when they choose to: licensing your work
+  for reuse and finding properly licensed works to reuse should be
+  easy. To achieve this on the technical front, we have defined
+  ccREL, an abstract model for rights expression based on the W3C's
+  RDF, and we recommend two syntaxes for web-based and
+  free-floating content: RDFa and XMP, respectively. The major goal
+  of our technological approach is to make it easy to publish and
+  read rights expression data now and in the future, when the kinds
+  of licensed items and the data expressed about them goes far
+  beyond what we can imagine today. By using RDF, ccREL links
+  Creative Commons to the fast-growing RDF data interoperability
+  infrastructure and its extensive developer toolset: other data
+  sets can be integrated with ccREL, and RDF technologies, e.g.
+  data provenance with digital signatures, can eventually benefit
+  ccREL.</p>
+
+  <p>We believe
+  that the technologies we have selected for ccREL will enable the
+  kind of powerful, distributed technological innovation that is
+  characteristic of the Internet. Anyone can create new
+  vocabularies for their own purposes and combine them with ccREL
+  as they please, without seeking central approval. Just as we did
+  with the legal text of the licenses, we aim to create the minimal
+  infrastructure required to enable collaboration and invention,
+  while letting it flourish as an organic, distributed process. We
+  believe ccREL provides this primordial technical layer that can
+  enable a vibrant application ecosystem, and we look forward to
+  the community's innovative ideas that can now freely build upon
+  ccREL.</p>
+
+  <h1><a name="SECTION00090000000000000000" id=
+  "SECTION00090000000000000000">9 Acknowledgments</a></h1>
+
+  <p>The authors
+  wish to credit Neeru Paharia, past Executive Director of Creative
+  Commons, for the "free-floating" content accountability
+  architecture, Manu Sporny, CEO of Bitmunk, for the Creative
+  Commons Operator code, and Aaron Swartz for the original Creative
+  Commons RDF data model and metadata strategy. More broadly, the
+  authors wish to acknowledge the work of a number of W3C groups,
+  in particular all members of the RDF-in-HTML task force (Mark
+  Birbeck, Jeremy Carroll, Michael Hausenblas, Shane McCarron,
+  Steven Pemberton, and Elias Torres), the Semantic Web Deployment
+  Working Group chaired by Guus Schreiber and David Wood, and the
+  tireless W3C staff without whom there would be no RDFa, GRDDL, or
+  RDF, and thus no ccREL: Eric Miller, Ralph Swick, Ivan Herman,
+  and Dan
+  Connolly.</p>
+
+  <p><br /></p>
+  <hr />
+
+  <h4>Footnotes</h4>
+
+  <dl>
+    <dt><a name="foot548" id="foot548">...
+    information.</a><a href=
+    "index.html#tex2html3"><sup>1</sup></a></dt>
+
+    <dd>Information about Creative Commons is
+    available on the web at <tt><a name="tex2html4" href=
+    "http://creativecommons.org" id=
+    "tex2html4">http://creativecommons.org</a></tt>. ccREL is a
+    trademark of Creative Commons, see <tt><a name=
+    "tex2html5" href="http://creativecommons.org/policies" id=
+    "tex2html5">http://creativecommons.org/policies</a></tt> for
+    details.</dd>
+
+    <dt><a name="foot549" id="foot549">...
+    (RDF).</a><a href=
+    "index.html#tex2html6"><sup>2</sup></a></dt>
+
+    <dd>RDF is a language for representing
+    information about resources in the World Wide Web. We provide a
+    short primer in this paper. Also, see the Web Consortium's RDF
+    Web site at <tt><a name="tex2html7" href=
+    "http://www.w3.org/RDF/" id=
+    "tex2html7">http://www.w3.org/RDF/</a></tt>.</dd>
+
+    <dt><a name="foot48" id="foot48">...
+    redistribute.</a><a href=
+    "index.html#tex2html8"><sup>3</sup></a></dt>
+
+    <dd>By "publisher" we mean anyone who places
+    CC-licensed material on the Internet. By "tool builders" we
+    mean people who write applications that are aware of the
+    license information. Example tools might be search programs
+    that filter their results based on specific types of licenses,
+    or user interfaces that display license information in
+    particular ways.</dd>
+
+    <dt><a name="foot550" id="foot550">...
+    media.</a><a href=
+    "index.html#tex2html9"><sup>4</sup></a></dt>
+
+    <dd>RDFa is an emerging collection of
+    attributes and processing rules for extending XHTML to support
+    RDF. See the W3C Working Draft "RDFa in XHTML: Syntax and
+    Processing" at <tt><a name="tex2html10" href=
+    "http://www.w3.org/TR/rdfa-syntax" id=
+    "tex2html10">http://www.w3.org/TR/rdfa-syntax</a></tt>. The
+    "RDFa Primer: Embedding Structured Data in Web Pages," may be
+    found at <tt><a name="tex2html11" href=
+    "http://www.w3.org/TR/xhtml-rdfa-primer" id=
+    "tex2html11">http://www.w3.org/TR/xhtml-rdfa-primer</a></tt>.
+    RDF/XML, described briefly below, is a method for expressing
+    RDF in XML syntax. See "RDF/XML Syntax Specification
+    (Revised)," W3C Recommendation 10 February 2004 at
+    <tt><a name="tex2html12" href=
+    "http://www.w3.org/TR/rdf-syntax-grammar/" id=
+    "tex2html12">http://www.w3.org/TR/rdf-syntax-grammar/</a></tt>.
+    XMP (Extended Metadata Platform) is a labeling technology
+    developed by Adobe, for embedding constrained RDF/XML within
+    documents. See <tt><a name="tex2html13" href=
+    "http://www.adobe.com/products/xmp/" id=
+    "tex2html13">http://www.adobe.com/products/xmp/</a></tt>.</dd>
+
+    <dt><a name="foot551" id="foot551">...
+    Activity.</a><a href=
+    "index.html#tex2html16"><sup>5</sup></a></dt>
+
+    <dd>The Semantic Web Activity is a large
+    collaborative effort led by the W3C aimed at extending the Web
+    to become a universal medium for data exchange, for programs as
+    well as people. See <tt><a name="tex2html17" href=
+    "http://www.w3.org/2001/sw/" id=
+    "tex2html17">http://www.w3.org/2001/sw/</a></tt>.</dd>
+
+    <dt><a name="foot66" id="foot66">...
+    URI.</a><a href=
+    "index.html#tex2html18"><sup>6</sup></a></dt>
+
+    <dd>The term URI (universal resource
+    identifier) is a generalization of URL (universal resource
+    locator). While a URL refers in principle to a resource on the
+    Web, a URI can designate anything named with this universal
+    hierarchical naming scheme. This generality is used in ccREL
+    for items such as downloaded media files.</dd>
+
+    <dt><a name="foot552" id="foot552">...
+    language.</a><a href=
+    "index.html#tex2html22"><sup>7</sup></a></dt>
+
+    <dd>The vocabulary page, <tt><a name=
+    "tex2html23" href="http://www.w3.org/1999/xhtml/vocab#" id=
+    "tex2html23">http://www.w3.org/1999/xhtml/vocab#</a></tt>, is
+    currently a placeholder which the W3C expects to update in
+    early 2008.</dd>
+
+    <dt><a name="foot553" id=
+    "foot553">...,</a><a href=
+    "index.html#tex2html25"><sup>8</sup></a></dt>
+
+    <dd>The full story is a little more
+    complicated. CC initially used the <tt><a name="tex2html26"
+    href="http://web.resource.org/cc/" id=
+    "tex2html26">http://web.resource.org/cc/</a></tt> namespace,
+    migrating to <tt><a name="tex2html27" href=
+    "http://creativecommons.org/ns#" id=
+    "tex2html27">http://creativecommons.org/ns#</a></tt> for
+    superior human interaction with the vocabulary when it became
+    apparent RDFa would facilitate this. In 2004 the Dublin Core
+    Metadata Initiative approved a "license" refinement of its
+    "rights" term (see <tt><a name="tex2html28" href=
+    "http://dublincore.org/usage/decisions/2004/2004-01.Rights-terms.shtml"
+    id=
+    "tex2html28">http://dublincore.org/usage/decisions/2004/2004-01.Rights-terms.shtml</a></tt>).
+    Had <tt><a name="tex2html29" href=
+    "http://purl.org/dc/terms/license" id=
+    "tex2html29">http://purl.org/dc/terms/license</a></tt> existed
+    in 2002, CC would not have defined <tt><a name="tex2html30"
+    href="http://web.resource.org/cc/license" id=
+    "tex2html30">http://web.resource.org/cc/license</a></tt>.
+    Thanks to the extensibility properties of RDF, <tt><a name=
+    "tex2html31" href="http://creativecommons.org/ns#license" id=
+    "tex2html31">http://creativecommons.org/ns#license</a></tt>
+    describes its relationship to each of these other
+    properties.</dd>
+
+    <dt><a name="foot554" id="foot554">...
+    concisely:</a><a href=
+    "index.html#tex2html37"><sup>9</sup></a></dt>
+
+    <dd>N3 (Notation 3) was designed to be a
+    compact and more readable alternative to RDF/XML. See
+    <tt><a name="tex2html38" href=
+    "http://www.w3.org/DesignIssues/Notation3.html" id=
+    "tex2html38">http://www.w3.org/DesignIssues/Notation3.html</a></tt>.</dd>
+
+    <dt><a name="foot555" id="foot555">...
+    Initiative.</a><a href=
+    "index.html#tex2html41"><sup>10</sup></a></dt>
+
+    <dd>The Dublin Core Metadata Initiative (DCMI)
+    promotes the widespread adoption of interoperable metadata
+    standards, and maintains a vocabulary of DCMI Metadata Terms.
+    See <tt><a name="tex2html42" href="http://dublincore.org/" id=
+    "tex2html42">http://dublincore.org/</a></tt>.</dd>
+
+    <dt><a name="foot556" id="foot556">...
+    license.</a><a href=
+    "index.html#tex2html43"><sup>11</sup></a></dt>
+
+    <dd>All current Creative Commons licenses
+    require attribution, and give the publisher the option of
+    specifying a URL with attribution information. The
+    <tt>cc:attributionURL</tt> property is the preferred way to
+    provide this URL in machine-readable form.</dd>
+
+    <dt><a name="foot557" id="foot557">...
+    as:</a><a href=
+    "index.html#tex2html47"><sup>12</sup></a></dt>
+
+    <dd><i>Caveat:</i> The text descriptions of
+    these property values are indicative only. The precise legal
+    interpretations of the properties can be subtle and even
+    jurisdiction dependent. Consult the full Creative Commons
+    licenses ("legal code") for the actual legal
+    definitions.</dd>
+
+    <dt><a name="foot558" id="foot558">...
+    N3.</a><a href=
+    "index.html#tex2html48"><sup>13</sup></a></dt>
+
+    <dd>It is worth noting that, while the
+    <tt>xhtml:license</tt> property has long been a part of the CC
+    specification, the <tt>cc:attributionName</tt> and
+    <tt>cc:attributionURL</tt> properties are new with ccREL. Under
+    the <i>independence and extensibility principle</i>, the
+    solution we select for embedding ccREL in HTML should allow for
+    such extensions without breaking tools that already know about
+    <tt>xhtml:license</tt>.</dd>
+
+    <dt><a name="foot559" id="foot559">...
+    content.</a><a href=
+    "index.html#tex2html51"><sup>14</sup></a></dt>
+
+    <dd>See <tt><a name="tex2html52" href=
+    "http://microformats.org/" id=
+    "tex2html52">http://microformats.org/</a></tt>.</dd>
+
+    <dt><a name="foot560" id="foot560">...
+    next.</a><a href=
+    "index.html#tex2html53"><sup>15</sup></a></dt>
+
+    <dd>See <tt><a name="tex2html54" href=
+    "http://microformats.org/wiki/grouping-brainstorming" id=
+    "tex2html54">http://microformats.org/wiki/grouping-brainstorming</a></tt>
+    for one discussion.</dd>
+
+    <dt><a name="foot275" id="foot275">...
+    document.</a><a href=
+    "index.html#tex2html55"><sup>16</sup></a></dt>
+
+    <dd>Profile URLs indicate that the HTML file
+    can be interpreted according to the rules of that profile. This
+    property has been used by some microformat specifications to
+    indicate, e.g., "this page contains the hCard microformat".
+    The property is also used by GRDDL for generic HTML
+    transformations to RDF/XML, though this approach to RDF
+    extraction from HTML is not fully compliant with the principles
+    laid out in this paper: it is difficult to tell which image on
+    a page is CC-licensed when the RDF extraction is achieved via
+    GRDDL.</dd>
+
+    <dt><a name="foot561" id="foot561">...
+    XML.</a><a href=
+    "index.html#tex2html56"><sup>17</sup></a></dt>
+
+    <dd>Gleaning Resource Descriptions from
+    Dialects of Languages (GRDDL) (<tt><a name="tex2html57" href=
+    "http://www.w3.org/TR/grddl/" id=
+    "tex2html57">http://www.w3.org/TR/grddl/</a></tt>) is a W3C
+    recommendation for linking Web documents to algorithms that
+    extract RDF data from the document.</dd>
+
+    <dt><a name="foot562" id="foot562">...
+    feeds:</a><a href=
+    "index.html#tex2html58"><sup>18</sup></a></dt>
+
+    <dd>Atom License Extension. See <tt><a name=
+    "tex2html59" href="http://tools.ietf.org/html/rfc4946" id=
+    "tex2html59">http://tools.ietf.org/html/rfc4946</a></tt>.</dd>
+
+    <dt><a name="foot563" id="foot563">...
+    resources.</a><a href=
+    "index.html#tex2html60"><sup>19</sup></a></dt>
+
+    <dd><tt><a name="tex2html61" href=
+    "http://www.openarchives.org/" id=
+    "tex2html61">http://www.openarchives.org/</a></tt></dd>
+
+    <dt><a name="foot564" id="foot564">...
+    SVG,</a><a href=
+    "index.html#tex2html62"><sup>20</sup></a></dt>
+
+    <dd>Scalable Vector Graphics, <tt><a name=
+    "tex2html63" href="http://www.w3.org/Graphics/SVG/" id=
+    "tex2html63">http://www.w3.org/Graphics/SVG/</a></tt>, a W3C
+    Recommendation for vector graphics expressed using
+    XML.</dd>
+
+    <dt><a name="foot568" id="foot568">...
+    vocabularies.</a><a href=
+    "index.html#tex2html76"><sup>21</sup></a></dt>
+
+    <dd>The Publishing Requirements for Industry
+    Standard Metadata (PRISM) provides a vocabulary for publishing
+    and aggregating content from books, magazines, and journals.
+    See <tt><a name="tex2html77" href=
+    "http://www.prismstandard.org/" id=
+    "tex2html77">http://www.prismstandard.org/</a></tt>.</dd>
+
+    <dt><a name="foot569" id="foot569">...
+    license.</a><a href=
+    "index.html#tex2html78"><sup>22</sup></a></dt>
+
+    <dd>See <tt><a name="tex2html79" href=
+    "http://www.nature.com/authors/editorial_policies/license.html"
+    id=
+    "tex2html79">http://www.nature.com/authors/editorial_policies/license.html</a></tt>
+    for details.</dd>
+
+    <dt><a name="foot570" id="foot570">...
+    subsidiary,</a><a href=
+    "index.html#tex2html80"><sup>23</sup></a></dt>
+
+    <dd>See <tt><a name="tex2html81" href=
+    "http://sciencecommons.org" id=
+    "tex2html81">http://sciencecommons.org</a></tt></dd>
+
+    <dt><a name="foot571" id="foot571">...
+    Distiller,</a><a href=
+    "index.html#tex2html86"><sup>24</sup></a></dt>
+
+    <dd><tt><a name="tex2html87" href=
+    "http://www.w3.org/2007/08/pyRdfa/" id=
+    "tex2html87">http://www.w3.org/2007/08/pyRdfa/</a></tt></dd>
+
+    <dt><a name="foot572" id=
+    "foot572">...MozCC</a><a href=
+    "index.html#tex2html89"><sup>25</sup></a></dt>
+
+    <dd><tt><a name="tex2html90" href=
+    "http://wiki.creativecommons.org/MozCC" id=
+    "tex2html90">http://wiki.creativecommons.org/MozCC</a></tt></dd>
+
+    <dt><a name="foot573" id=
+    "foot573">...Operator</a><a href=
+    "index.html#tex2html92"><sup>26</sup></a></dt>
+
+    <dd><tt><a name="tex2html93" href=
+    "https://addons.mozilla.org/en-US/firefox/addon/4106" id=
+    "tex2html93">https://addons.mozilla.org/en-US/firefox/addon/4106</a></tt></dd>
+
+    <dt><a name="foot574" id="foot574">...
+    follows:</a><a href=
+    "index.html#tex2html94"><sup>27</sup></a></dt>
+
+    <dd>Operator currently does not handle HTML
+    reserved keywords, such as <tt>rel="license"</tt>. Thus, we
+    consider the script for the property <tt>cc:license</tt>, and
+    provide examples appropriately adjusted. This gap is expected
+    to be filled by early 2008.</dd>
+  </dl><br />
+  <hr />
+  <p>This work is licensed under a 
+    <a href="http://creativecommons.org/licenses/by/3.0/" rel="license">
+    Creative Commons Attribution License, v3.0</a>. The license is
+    available at http://creativecommons.org/licenses/by/3.0/. Please 
+    provide attribution to <span property="cc:attributionName">Creative Commons</span> 
+    and the URL <a href="http://creativecommons.org/ccrel" 
+      rel="cc:attributionURL">http://creativecommons.org/ccrel</a>.
+  </p>
+</body>
+</html>
